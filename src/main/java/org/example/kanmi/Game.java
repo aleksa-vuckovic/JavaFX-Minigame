@@ -70,7 +70,6 @@ public class Game extends Group {
         objects.add(coin);
         getChildren().add(coin);
         coin.start(this);
-        System.out.println("Added coin at position " + position);
     }
     public void start() {
         state = State.PLAYING;

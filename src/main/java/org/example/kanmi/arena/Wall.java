@@ -24,8 +24,9 @@ public class Wall extends BarrierObject {
         double px = 2*impact.getX()/box.getWidth();
         double py = 2*impact.getY()/box.getHeight();
         double pz = 2*impact.getZ()/box.getDepth();
-        if (Math.abs(px) >= Math.abs(py) && Math.abs(px) >= Math.abs(pz))
+        if (Math.abs(px) >= Math.abs(py) && Math.abs(px) >= Math.abs(pz)) {
             return Rotate.X_AXIS.multiply(Math.signum(px));
+        }
         else if (Math.abs(py) >= Math.abs(pz))
             return Rotate.Y_AXIS.multiply(Math.signum(py));
         else return Rotate.Z_AXIS.multiply(Math.signum(pz));

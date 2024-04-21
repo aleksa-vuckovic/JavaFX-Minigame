@@ -3,8 +3,7 @@ package org.example.kanmi;
 import javafx.geometry.BoundingBox;
 import javafx.geometry.Bounds;
 import javafx.geometry.Point3D;
-import javafx.scene.transform.Rotate;
-import javafx.scene.transform.Transform;
+import javafx.scene.transform.*;
 import javafx.util.Pair;
 import org.example.kanmi.gameobject.BarrierObject;
 import org.example.kanmi.gameobject.GameObject;
@@ -45,9 +44,13 @@ public class Utils {
      * Returns a transform which transforms startVector into alignment with goalVector.
      * @return
      */
-    public static Rotate alignTransform(Point3D startVector, Point3D goalVector) {
+    public static Transform alignTransform(Point3D startVector, Point3D goalVector) {
+        startVector = startVector.normalize();
+        goalVector = goalVector.normalize();
+        if (startVector.equals(Point3D.ZERO) || goalVector.equals(Point3D.ZERO) || startVector.equals(goalVector)) return new Translate();
+        if (startVector.multiply(-1).equals(goalVector)) return new Scale(-1,-1,-1);
         //find the rotation vector
-        double angle = Math.acos(startVector.normalize().dotProduct(goalVector.normalize()));
+        double angle = Math.acos(startVector.dotProduct(goalVector));
         //find the axis of rotation (as perpendicular to the plane)
         Point3D axis = startVector.crossProduct(goalVector);
         return new Rotate(Math.toDegrees(angle), axis);
@@ -97,7 +100,7 @@ public class Utils {
         try {
             direction = align.inverseTransform(direction);
             b.setDirection(direction);
-        } catch(Exception e) {}
+        } catch(Exception e) {e.printStackTrace();}
     }
 
 
