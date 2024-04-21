@@ -1,5 +1,6 @@
 package org.example.kanmi.arena;
 
+import javafx.geometry.Point3D;
 import javafx.scene.image.Image;
 import javafx.scene.paint.Color;
 import javafx.scene.paint.Material;
@@ -17,7 +18,7 @@ public abstract class Arena extends BarrierObject {
     public static Arena getRegularArena() {
         Image concreteImage = new Image("concrete.jpg");
         Image brickImage = new Image("brick.jpg");
-        Arena arena = new RectangleArena(500, 500);
+        Arena arena = new RectangleArena(1000, 1000);
         PhongMaterial mat = new PhongMaterial(Color.GREY);
         mat.setDiffuseMap(concreteImage);
         arena.setGroundMaterial(mat);
@@ -29,5 +30,11 @@ public abstract class Arena extends BarrierObject {
 
     public abstract void setGroundMaterial(Material mat);
     public abstract void setWallMaterial(Material mat);
+
+
+    /**
+     * @return A random location on the surface of the arena.
+     */
+    public abstract Point3D getRandomLocation();
 
 }

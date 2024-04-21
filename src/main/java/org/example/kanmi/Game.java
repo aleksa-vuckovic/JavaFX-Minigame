@@ -7,19 +7,22 @@ import javafx.scene.input.KeyCode;
 import javafx.scene.input.KeyEvent;
 import javafx.scene.input.MouseEvent;
 import org.example.kanmi.arena.Arena;
+import org.example.kanmi.gameobject.GameObject;
+import org.example.kanmi.items.Coin;
 import org.example.kanmi.player.Player;
 
-import java.util.HashSet;
-import java.util.Set;
+import java.util.*;
 
 public class Game extends Group {
     /**
      * How many degrees per pixel of mouse movement.
      */
     public static final double MOUSE_SENSITIVITY = 0.5;
+    public static final double COIN_PERIOD = 5000;
 
     private Arena arena;
     private Player player;
+    private List<GameObject> objects = new ArrayList<>();
     private IntervalTimer timer;
     public enum State {
         PLAYING, STOPPED
@@ -60,14 +63,43 @@ public class Game extends Group {
         mouse = newMouse;
     }
 
+    private void addRandomCoin() {
+        Coin coin = new Coin();
+        Point3D position = arena.getRandomLocation();
+        coin.setPosition(position);
+        objects.add(coin);
+        getChildren().add(coin);
+        coin.start(this);
+        System.out.println("Added coin at position " + position);
+    }
     public void start() {
         state = State.PLAYING;
         player.start(this);
         arena.start(this);
+        for (int i = 0; i < 4; i++) addRandomCoin();
         timer = new IntervalTimer() {
+            double coinInterval = 0;
             @Override
             public void handleInterval(long interval) {
                 arena.interact(player);
+                for (int i = 0; i < objects.size(); i++) objects.get(i).interact(player);
+
+                //Removing stopped objects
+                Iterator<GameObject> iter = objects.iterator();
+                while(iter.hasNext()) {
+                    GameObject go = iter.next();
+                    if (go.stopped()) {
+                        iter.remove();
+                        getChildren().remove(go);
+                    }
+                }
+
+                //Generate coins
+                coinInterval += interval;
+                if (coinInterval >= COIN_PERIOD) {
+                    coinInterval -= COIN_PERIOD;
+                    addRandomCoin();
+                }
             }
         };
         timer.start();

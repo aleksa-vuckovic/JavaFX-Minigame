@@ -67,4 +67,10 @@ public class RectangleArena extends Arena {
         return null; //not used
     }
 
+    @Override
+    public Point3D getRandomLocation() {
+        double x = (Math.random()-0.5)*innerSpace.getWidth();
+        double z = (Math.random()-0.5)*innerSpace.getDepth();
+        return new Point3D(x, 0, z);
+    }
 }

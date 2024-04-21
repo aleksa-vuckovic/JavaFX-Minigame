@@ -1,6 +1,7 @@
 package org.example.kanmi.gameobject;
 
 
+import javafx.geometry.Point2D;
 import javafx.geometry.Point3D;
 import org.example.kanmi.Game;
 import org.example.kanmi.IntervalTimer;
@@ -15,6 +16,10 @@ public class SelfMovingGameObject extends GameObject {
      * Preferred direction and speed, in the local coordinate system.
      */
     protected Point3D motor = Point3D.ZERO;
+    private Point3D getSceneMotor() {
+        return getLocalToSceneTransform().transform(motor)
+                .subtract(getLocalToSceneTransform().transform(Point3D.ZERO));
+    }
     private IntervalTimer timer;
 
     public void setMotor(Point3D motor) { this.motor = motor; }
@@ -32,8 +37,7 @@ public class SelfMovingGameObject extends GameObject {
             public void handleInterval(long interval) {
                 move(getDirection().multiply(interval));
                 //Reset direction until further interaction
-                setDirection(getLocalToSceneTransform().transform(motor)
-                        .subtract(getLocalToSceneTransform().transform(Point3D.ZERO)));
+                setDirection(getSceneMotor());
             }
         };
         timer.start();

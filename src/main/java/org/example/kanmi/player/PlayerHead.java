@@ -12,7 +12,7 @@ public class PlayerHead extends GameObject {
     private Rotate tilt = new Rotate(0, Rotate.X_AXIS);
     public PlayerHead() {
         camera.setNearClip(0.1);
-        camera.setFarClip(1000);
+        camera.setFarClip(2000);
         camera.setFieldOfView(100);
         getChildren().addAll(camera);
         getTransforms().addAll(height, tilt);
