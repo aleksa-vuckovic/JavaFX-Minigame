@@ -3,6 +3,7 @@ package org.example.kanmi;
 import javafx.geometry.BoundingBox;
 import javafx.geometry.Bounds;
 import javafx.geometry.Point3D;
+import javafx.scene.text.Text;
 import javafx.scene.transform.*;
 import javafx.util.Pair;
 import org.example.kanmi.gameobject.BarrierObject;
@@ -90,8 +91,6 @@ public class Utils {
     public static void obstacleCollision(BarrierObject a, GameObject b) {
         Point3D impact = a.getImpact(b);
         if (impact == null) return;
-
-
         Point3D direction = b.getDirection();
         Point3D normal = a.getNormal(impact);
         Transform align = Utils.alignTransform(normal, Rotate.X_AXIS);
@@ -103,5 +102,8 @@ public class Utils {
         } catch(Exception e) {e.printStackTrace();}
     }
 
+    public static double getTextHeight(Text text) {
+        return text.getBoundsInLocal().getHeight()*0.8;
+    }
 
 }

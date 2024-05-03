@@ -1,12 +1,12 @@
 package org.example.kanmi;
 
 import javafx.application.Application;
-import javafx.scene.Cursor;
-import javafx.scene.Group;
-import javafx.scene.Scene;
+import javafx.scene.*;
 import javafx.scene.input.KeyEvent;
 import javafx.scene.input.MouseEvent;
+import javafx.scene.paint.Color;
 import javafx.scene.shape.Box;
+import javafx.scene.shape.Rectangle;
 import javafx.stage.Stage;
 import org.example.kanmi.arena.Arena;
 import org.example.kanmi.player.Player;
@@ -22,13 +22,10 @@ public class HelloApplication extends Application {
         game.setArena(arena);
         game.start();
 
-        Scene scene = new Scene(game, 800, 500, true);
-        scene.setCamera(player.getCamera());
-        scene.addEventHandler(KeyEvent.ANY, game::onKeyEvent);
-        scene.addEventHandler(MouseEvent.ANY, game::onMouseEvent);
-        scene.setCursor(Cursor.NONE);
+
+        //game.setCursor(Cursor.NONE);
         stage.setTitle("Kanmi");
-        stage.setScene(scene);
+        stage.setScene(game);
         stage.show();
 
     }

@@ -13,6 +13,7 @@ import org.example.kanmi.Game;
 import org.example.kanmi.gameobject.GameObject;
 import org.example.kanmi.IntervalTimer;
 import org.example.kanmi.gameobject.SelfMovingGameObject;
+import org.example.kanmi.indicators.ScoreIndicator;
 
 import java.util.HashSet;
 import java.util.Set;
@@ -25,6 +26,7 @@ public class Player extends SelfMovingGameObject {
      * Speed in pixels per millisecond.
      */
     private double speed;
+    private ScoreIndicator scoreIndicator = new ScoreIndicator();
     private IntervalTimer timer;
     private final Rotate rotation = new Rotate(0, Rotate.Y_AXIS);
 
@@ -71,5 +73,9 @@ public class Player extends SelfMovingGameObject {
     }
     public PerspectiveCamera getCamera() {
         return head.getCamera();
+    }
+
+    public ScoreIndicator getScoreIndicator() {
+        return scoreIndicator;
     }
 }

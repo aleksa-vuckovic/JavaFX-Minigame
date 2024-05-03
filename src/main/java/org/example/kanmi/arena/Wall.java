@@ -3,6 +3,7 @@ package org.example.kanmi.arena;
 import javafx.geometry.Point3D;
 import javafx.scene.paint.Material;
 import javafx.scene.shape.Box;
+import javafx.scene.shape.Shape;
 import javafx.scene.transform.Rotate;
 import org.example.kanmi.gameobject.BarrierObject;
 

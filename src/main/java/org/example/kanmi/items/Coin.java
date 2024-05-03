@@ -62,17 +62,18 @@ public class Coin extends GameObject {
     public void interact(GameObject other) {
         if (collected) return;
         if (other instanceof Player && getImpact(other) != null) {
-           collected = true;
-           rotating.setRate(10);
-           ScaleTransition disappearing = new ScaleTransition(Duration.seconds(1), cyl);
-           disappearing.setDelay(Duration.seconds(1));
-           disappearing.setFromX(1); disappearing.setFromY(1); disappearing.setFromZ(1);
-           disappearing.setToX(0); disappearing.setToY(0); disappearing.setToZ(0);
-           disappearing.setInterpolator(Interpolator.EASE_IN);
-           disappearing.setOnFinished(actionEvent -> {
-               stop();
-           });
-           disappearing.play();
+            ((Player) other).getScoreIndicator().inc();
+            collected = true;
+            rotating.setRate(10);
+            ScaleTransition disappearing = new ScaleTransition(Duration.seconds(1), cyl);
+            disappearing.setDelay(Duration.seconds(1));
+            disappearing.setFromX(1); disappearing.setFromY(1); disappearing.setFromZ(1);
+            disappearing.setToX(0); disappearing.setToY(0); disappearing.setToZ(0);
+            disappearing.setInterpolator(Interpolator.EASE_IN);
+            disappearing.setOnFinished(actionEvent -> {
+                stop();
+            });
+            disappearing.play();
         }
     }
 }

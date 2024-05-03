@@ -39,7 +39,7 @@ public abstract class GameObject extends Group {
      */
     protected Point3D direction = Point3D.ZERO;
     /**
-     * @return Direction in game coordinate system.
+     * @return Direction (and speed) in game coordinate system.
      */
     public Point3D getDirection() {
         return direction;
