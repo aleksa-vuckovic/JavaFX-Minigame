@@ -15,6 +15,7 @@ import org.example.kanmi.indicators.EnergyIndicator;
 import org.example.kanmi.indicators.ScoreIndicator;
 import org.example.kanmi.indicators.TimeIndicator;
 import org.example.kanmi.items.Coin;
+import org.example.kanmi.items.Energy;
 import org.example.kanmi.player.Player;
 
 import java.util.*;
@@ -24,7 +25,39 @@ public class Game extends Scene {
      * How many degrees per pixel of mouse movement.
      */
     private static final double MOUSE_SENSITIVITY = 0.5;
-    private static final double COIN_PERIOD = 5000;
+    private class ItemGenerator extends IntervalTimer {
+        public interface Producer {GameObject produce();}
+        private final long period;
+        private final int initial;
+        private final Producer producer;
+        private long cur = 0;
+
+        public ItemGenerator(long period, int initial, Producer producer) {
+            this.period = period;
+            this.initial = initial;
+            this.producer = producer;
+        }
+        @Override
+        public void handleInterval(long interval) {
+            cur += interval;
+            if (cur < period) return;
+            cur -= period;
+            generate();
+        }
+        public void init() {
+            for (int i = 0; i < initial; i++) generate();
+        }
+        public void generate() {
+            GameObject go = producer.produce();
+            Point3D position = arena.getRandomLocation();
+            go.setPosition(position);
+            objects.add(go);
+            root3D.getChildren().add(go);
+            go.start(Game.this);
+        }
+    }
+    private static final long COIN_PERIOD = 5000;
+    private static final long ENERGY_PERIOD = 12000;
     private static final double WIDTH = 800;
     private static final double HEIGHT = 500;
 
@@ -36,6 +69,10 @@ public class Game extends Scene {
     private Player player;
     private List<GameObject> objects = new ArrayList<>();
     private IntervalTimer timer;
+    private List<ItemGenerator> generators = List.of(
+            new ItemGenerator(COIN_PERIOD, 4, Coin::new),
+            new ItemGenerator(ENERGY_PERIOD, 4, Energy::new)
+    );
     private final TimeIndicator timeIndicator = new TimeIndicator();
     public enum State {
         PLAYING, STOPPED
@@ -92,23 +129,16 @@ public class Game extends Scene {
         }
         mouse = newMouse;
     }
-
-    private void addRandomCoin() {
-        Coin coin = new Coin();
-        Point3D position = arena.getRandomLocation();
-        coin.setPosition(position);
-        objects.add(coin);
-        root3D.getChildren().add(coin);
-        coin.start(this);
-    }
     public void start() {
         state = State.PLAYING;
         player.start(this);
         arena.start(this);
         timeIndicator.start();
-        for (int i = 0; i < 4; i++) addRandomCoin();
+        for (ItemGenerator gen: generators) {
+            gen.init();
+            gen.start();
+        }
         timer = new IntervalTimer() {
-            double coinInterval = 0;
             @Override
             public void handleInterval(long interval) {
                 arena.interact(player);
@@ -121,12 +151,6 @@ public class Game extends Scene {
                         iter.remove();
                         root3D.getChildren().remove(go);
                     }
-                }
-                //Generate coins
-                coinInterval += interval;
-                if (coinInterval >= COIN_PERIOD) {
-                    coinInterval -= COIN_PERIOD;
-                    addRandomCoin();
                 }
             }
         };
