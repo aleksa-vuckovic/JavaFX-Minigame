@@ -11,6 +11,7 @@ import javafx.scene.input.KeyEvent;
 import javafx.scene.input.MouseEvent;
 import org.example.kanmi.arena.Arena;
 import org.example.kanmi.gameobject.GameObject;
+import org.example.kanmi.indicators.EnergyIndicator;
 import org.example.kanmi.indicators.ScoreIndicator;
 import org.example.kanmi.indicators.TimeIndicator;
 import org.example.kanmi.items.Coin;
@@ -36,7 +37,6 @@ public class Game extends Scene {
     private List<GameObject> objects = new ArrayList<>();
     private IntervalTimer timer;
     private final TimeIndicator timeIndicator = new TimeIndicator();
-    private ScoreIndicator scoreIndicator = null;
     public enum State {
         PLAYING, STOPPED
     }
@@ -65,10 +65,14 @@ public class Game extends Scene {
         if (this.player != null) {
             root3D.getChildren().remove(this.player);
             root2D.getChildren().remove(this.player.getScoreIndicator());
+            root2D.getChildren().remove(this.player.getEnergyIndicator());
         }
         this.player = player;
         root3D.getChildren().add(player);
         root2D.getChildren().add(player.getScoreIndicator());
+        EnergyIndicator ei = player.getEnergyIndicator();
+        ei.setCentered(WIDTH);
+        root2D.getChildren().add(ei);
         scene3D.setCamera(player.getCamera());
     }
 

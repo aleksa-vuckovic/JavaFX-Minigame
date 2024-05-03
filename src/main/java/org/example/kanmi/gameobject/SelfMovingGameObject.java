@@ -17,12 +17,13 @@ public class SelfMovingGameObject extends GameObject {
      */
     protected Point3D motor = Point3D.ZERO;
     private Point3D getSceneMotor() {
-        return getLocalToSceneTransform().transform(motor)
+        return getLocalToSceneTransform().transform(getMotor())
                 .subtract(getLocalToSceneTransform().transform(Point3D.ZERO));
     }
     private IntervalTimer timer;
 
     public void setMotor(Point3D motor) { this.motor = motor; }
+    public Point3D getMotor() {return motor;}
 
     @Override
     public void interact(GameObject other) {
@@ -35,9 +36,9 @@ public class SelfMovingGameObject extends GameObject {
         timer = new IntervalTimer() {
             @Override
             public void handleInterval(long interval) {
-                move(getDirection().multiply(interval));
-                //Reset direction until further interaction
-                setDirection(getSceneMotor());
+            move(getDirection().multiply(interval));
+            //Reset direction until further interaction
+            setDirection(getSceneMotor());
             }
         };
         timer.start();
