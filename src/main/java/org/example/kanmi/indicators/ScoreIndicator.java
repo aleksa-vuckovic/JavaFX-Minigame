@@ -45,6 +45,7 @@ public class ScoreIndicator extends Group {
     public void inc() {
         setScore(score + 1);
     }
+    public void inc(int val) {setScore(score + val);}
     public void setScore(int score) {
         this.score = score;
         text.setContent(format(score));

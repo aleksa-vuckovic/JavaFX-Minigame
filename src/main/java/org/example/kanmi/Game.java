@@ -56,8 +56,6 @@ public class Game extends Scene {
             go.start(Game.this);
         }
     }
-    private static final long COIN_PERIOD = 5000;
-    private static final long ENERGY_PERIOD = 12000;
     private static final double WIDTH = 800;
     private static final double HEIGHT = 500;
 
@@ -70,8 +68,13 @@ public class Game extends Scene {
     private List<GameObject> objects = new ArrayList<>();
     private IntervalTimer timer;
     private List<ItemGenerator> generators = List.of(
-            new ItemGenerator(COIN_PERIOD, 4, Coin::new),
-            new ItemGenerator(ENERGY_PERIOD, 4, Energy::new)
+            new ItemGenerator(5000, 4, () -> {
+                double r = Math.random();
+                if (r < 0.2) return Coin.blueCoin();
+                else if (r < 0.5) return Coin.greenCoin();
+                else return Coin.goldCoin();
+            }),
+            new ItemGenerator(12000, 4, Energy::new)
     );
     private final TimeIndicator timeIndicator = new TimeIndicator();
     public enum State {

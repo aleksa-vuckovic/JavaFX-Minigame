@@ -22,12 +22,12 @@ public class Coin extends GameObject {
     Rotate cylRotation;
     Timeline rotating;
     boolean collected = false;
+    int points;
 
-    public Coin() {
+    public Coin(PhongMaterial mat, int points) {
+        this.points = points;
         cyl = new Cylinder(RADIUS, THICKNESS);
-        Image goldImage = new Image("gold.jpg");
-        PhongMaterial mat = new PhongMaterial(Color.YELLOW);
-        mat.setDiffuseMap(goldImage);
+
         cyl.setMaterial(mat);
         cylRotation = new Rotate(0, Rotate.Y_AXIS);
         cyl.getTransforms().addAll(
@@ -43,6 +43,19 @@ public class Coin extends GameObject {
         KeyFrame kf2 = new KeyFrame(Duration.seconds(5), kv2);
         rotating = new Timeline(kf1, kf2);
         rotating.setCycleCount(Integer.MAX_VALUE);
+    }
+    public static Coin goldCoin() {
+        PhongMaterial mat = new PhongMaterial(Color.YELLOW);
+        mat.setDiffuseMap(new Image("gold.jpg"));
+        return new Coin(mat, 1);
+    }
+    public static Coin greenCoin() {
+        PhongMaterial mat = new PhongMaterial(Color.GREEN);
+        return new Coin(mat, 3);
+    }
+    public static Coin blueCoin() {
+        PhongMaterial mat = new PhongMaterial(Color.BLUE);
+        return new Coin(mat, 5);
     }
 
     @Override
@@ -62,7 +75,7 @@ public class Coin extends GameObject {
     public void interact(GameObject other) {
         if (collected) return;
         if (other instanceof Player && getImpact(other) != null) {
-            ((Player) other).getScoreIndicator().inc();
+            ((Player) other).getScoreIndicator().inc(points);
             collected = true;
             rotating.setRate(10);
             ScaleTransition disappearing = new ScaleTransition(Duration.seconds(1), cyl);
