@@ -2,7 +2,9 @@ package org.example.kanmi;
 
 import javafx.geometry.BoundingBox;
 import javafx.geometry.Bounds;
+import javafx.geometry.Point2D;
 import javafx.geometry.Point3D;
+import javafx.scene.paint.Color;
 import javafx.scene.text.Text;
 import javafx.scene.transform.*;
 import javafx.util.Pair;
@@ -69,7 +71,7 @@ public class Utils {
         Point3D dirOther = a.getDirection().multiply(c3).add(b.getDirection().multiply(c4));
         a.setDirection(dir);
         b.setDirection(dirOther);
-        double rad = Utils.radius(intersect);
+        double rad = Math.min(Math.min(intersect.getWidth(), intersect.getHeight()), intersect.getDepth());//Utils.radius(intersect);
         a.move(dir.normalize().multiply(rad));
         b.move(dirOther.normalize().multiply(rad));
     }
@@ -104,6 +106,16 @@ public class Utils {
 
     public static double getTextHeight(Text text) {
         return text.getBoundsInLocal().getHeight()*0.8;
+    }
+
+    public static Color changeOpacity(Color color, float opacity) {
+        return Color.color(color.getRed(), color.getGreen(), color.getBlue(), opacity);
+    }
+
+    public static Point2D getCirclePoint(int divisions, int i, double radius, double offset) {
+        double angle = 360.0*i/divisions;
+        angle += offset*360.0/divisions;
+        return new Rotate(angle).transform(radius, 0);
     }
 
 }

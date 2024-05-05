@@ -7,7 +7,7 @@ import org.example.kanmi.Utils;
 /**
  * A game object that moves inertially.
  */
-public class InertialGameObject extends GameObject {
+public abstract class InertialGameObject extends GameObject {
 
     private IntervalTimer timer;
 

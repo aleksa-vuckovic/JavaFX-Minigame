@@ -63,7 +63,9 @@ public class Player extends SelfMovingGameObject {
         position.setY(-height/2);
     }
     public static Player getRegularPlayer() {
-        return new Player(25,100,0.1, 0.1/1000);
+         Player ret = new Player(15,100,0.1, 0.1/1000);
+         ret.setMass(100);
+         return ret;
     }
 
     public void rotate(double dangle) {
@@ -105,5 +107,10 @@ public class Player extends SelfMovingGameObject {
     }
     public EnergyIndicator getEnergyIndicator() {
         return energyIndicator;
+    }
+
+    @Override
+    public void interact(GameObject other) {
+        other.interact(this);
     }
 }

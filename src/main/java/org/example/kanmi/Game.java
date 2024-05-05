@@ -2,21 +2,27 @@ package org.example.kanmi;
 
 import javafx.geometry.Point2D;
 import javafx.geometry.Point3D;
-import javafx.scene.Group;
-import javafx.scene.Scene;
-import javafx.scene.SceneAntialiasing;
-import javafx.scene.SubScene;
-import javafx.scene.input.KeyCode;
+import javafx.scene.*;
+import javafx.scene.image.Image;
 import javafx.scene.input.KeyEvent;
 import javafx.scene.input.MouseEvent;
+import javafx.scene.paint.Color;
+import javafx.scene.paint.PhongMaterial;
+import javafx.scene.shape.Rectangle;
+import javafx.scene.text.Font;
+import javafx.scene.text.Text;
+import javafx.scene.text.TextBoundsType;
 import org.example.kanmi.arena.Arena;
+import org.example.kanmi.enemies.DumbEnemy;
 import org.example.kanmi.gameobject.GameObject;
 import org.example.kanmi.indicators.EnergyIndicator;
-import org.example.kanmi.indicators.ScoreIndicator;
 import org.example.kanmi.indicators.TimeIndicator;
-import org.example.kanmi.items.Coin;
-import org.example.kanmi.items.Energy;
+import org.example.kanmi.collectibles.Coin;
+import org.example.kanmi.collectibles.Energy;
+import org.example.kanmi.misc.Cone;
 import org.example.kanmi.player.Player;
+import org.example.kanmi.ui.Button;
+import org.example.kanmi.ui.Column;
 
 import java.util.*;
 
@@ -51,8 +57,7 @@ public class Game extends Scene {
             GameObject go = producer.produce();
             Point3D position = arena.getRandomLocation();
             go.setPosition(position);
-            objects.add(go);
-            root3D.getChildren().add(go);
+            add(go);
             go.start(Game.this);
         }
     }
@@ -74,11 +79,12 @@ public class Game extends Scene {
                 else if (r < 0.5) return Coin.greenCoin();
                 else return Coin.goldCoin();
             }),
-            new ItemGenerator(12000, 4, Energy::new)
+            new ItemGenerator(12000, 4, Energy::new),
+            new ItemGenerator(Long.MAX_VALUE, 3, DumbEnemy::new)
     );
     private final TimeIndicator timeIndicator = new TimeIndicator();
     public enum State {
-        PLAYING, STOPPED
+        PLAYING, PENDING_STOP, STOPPED
     }
     private State state = State.STOPPED;
 
@@ -92,23 +98,33 @@ public class Game extends Scene {
         addEventHandler(MouseEvent.ANY, this::onMouseEvent);
         root2D.getChildren().add(timeIndicator);
         timeIndicator.setPosition(new Point2D(WIDTH, 0));
+        AmbientLight light = new AmbientLight(Color.WHITE);
+        root3D.getChildren().add(light);
     }
 
+    private void remove(GameObject go) {
+        root3D.getChildren().remove(go);
+        objects.remove(go);
+    }
+    private void add(GameObject go) {
+        root3D.getChildren().add(go);
+        objects.add(go);
+    }
 
     public void setArena(Arena arena) {
-        root3D.getChildren().remove(this.arena);
+        remove(this.arena);
         this.arena = arena;
-        root3D.getChildren().add(arena);
+        add(arena);
     }
     public Arena getArena() { return arena; }
     public void setPlayer(Player player) {
+        remove(this.player);
         if (this.player != null) {
-            root3D.getChildren().remove(this.player);
             root2D.getChildren().remove(this.player.getScoreIndicator());
             root2D.getChildren().remove(this.player.getEnergyIndicator());
         }
         this.player = player;
-        root3D.getChildren().add(player);
+        add(player);
         root2D.getChildren().add(player.getScoreIndicator());
         EnergyIndicator ei = player.getEnergyIndicator();
         ei.setCentered(WIDTH);
@@ -144,8 +160,9 @@ public class Game extends Scene {
         timer = new IntervalTimer() {
             @Override
             public void handleInterval(long interval) {
-                arena.interact(player);
-                for (int i = 0; i < objects.size(); i++) objects.get(i).interact(player);
+                for (int i = 0; i < objects.size(); i++)
+                    for (int j = i + 1; j < objects.size(); j++)
+                        objects.get(i).interact(objects.get(j));
                 //Removing stopped objects
                 Iterator<GameObject> iter = objects.iterator();
                 while(iter.hasNext()) {
@@ -155,9 +172,33 @@ public class Game extends Scene {
                         root3D.getChildren().remove(go);
                     }
                 }
+                if (state == State.PENDING_STOP) Game.this.stop();
             }
         };
         timer.start();
+    }
+
+    public void gameOver() {
+        state = State.PENDING_STOP;
+    }
+
+    private void stop() {
+        state = State.STOPPED;
+        for (GameObject go: objects) go.stop();
+        for (ItemGenerator ig: generators) ig.stop();
+        timeIndicator.stop();
+        timer.stop();
+        int score = player.getScoreIndicator().getScore();
+
+        Column resultScreen = new Column(WIDTH, HEIGHT, Column.HorizontalAlignment.CENTER, Column.VerticalArrangement.center(20));
+        Text gameOverText = new Text("GAME OVER");
+        Text scoreText = new Text("Score: " + score);
+        gameOverText.setFont(Font.font("Arial", 40));
+        scoreText.setFont(Font.font("Arial", 20));
+        Button back = new Button("Back", null);
+        resultScreen.setBackround(Utils.changeOpacity(Color.WHITE, 0.5f));
+        resultScreen.addAll(gameOverText, scoreText, back);
+        root2D.getChildren().add(resultScreen);
     }
 
 }

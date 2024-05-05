@@ -18,7 +18,7 @@ public abstract class Arena extends BarrierObject {
     public static Arena getRegularArena() {
         Image concreteImage = new Image("concrete.jpg");
         Image brickImage = new Image("brick.jpg");
-        Arena arena = new RectangleArena(1000, 1000);
+        Arena arena = new RectangleArena(1500, 1500);
         PhongMaterial mat = new PhongMaterial(Color.GREY);
         mat.setDiffuseMap(concreteImage);
         arena.setGroundMaterial(mat);

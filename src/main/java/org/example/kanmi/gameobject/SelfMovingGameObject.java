@@ -10,7 +10,7 @@ import org.example.kanmi.Utils;
 /**
  * Movable object that has its own motor.
  */
-public class SelfMovingGameObject extends GameObject {
+public abstract class SelfMovingGameObject extends GameObject {
 
     /**
      * Preferred direction and speed, in the local coordinate system.

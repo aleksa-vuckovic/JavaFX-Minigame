@@ -7,9 +7,13 @@ import javafx.scene.input.MouseEvent;
 import javafx.scene.paint.Color;
 import javafx.scene.shape.Box;
 import javafx.scene.shape.Rectangle;
+import javafx.scene.text.Font;
+import javafx.scene.text.Text;
 import javafx.stage.Stage;
 import org.example.kanmi.arena.Arena;
 import org.example.kanmi.player.Player;
+import org.example.kanmi.ui.Button;
+import org.example.kanmi.ui.Column;
 
 public class HelloApplication extends Application {
     @Override
@@ -21,7 +25,6 @@ public class HelloApplication extends Application {
         game.setPlayer(player);
         game.setArena(arena);
         game.start();
-
 
         //game.setCursor(Cursor.NONE);
         stage.setTitle("Kanmi");

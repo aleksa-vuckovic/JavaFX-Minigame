@@ -108,3 +108,11 @@ public abstract class GameObject extends Group {
         return this.game == null;
     }
 }
+
+/**
+ * Interaction is a 2-way event, so to avoid implementing the same procedure in 2 classes,
+ * an ordering among all types will be established.
+ *
+ * Collectible -> BarrierObject -> DumbEnemy -> Player
+ *
+ */
