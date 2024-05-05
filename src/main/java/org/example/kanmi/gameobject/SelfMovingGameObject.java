@@ -15,7 +15,8 @@ public abstract class SelfMovingGameObject extends GameObject {
     /**
      * Preferred direction and speed, in the local coordinate system.
      */
-    protected Point3D motor = Point3D.ZERO;
+    private Point3D motor = Point3D.ZERO;
+
     private Point3D getSceneMotor() {
         return getLocalToSceneTransform().transform(getMotor())
                 .subtract(getLocalToSceneTransform().transform(Point3D.ZERO));
@@ -50,4 +51,5 @@ public abstract class SelfMovingGameObject extends GameObject {
         timer.stop();
         timer = null;
     }
+
 }

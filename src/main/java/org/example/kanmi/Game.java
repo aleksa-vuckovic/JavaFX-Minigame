@@ -13,7 +13,9 @@ import javafx.scene.text.Font;
 import javafx.scene.text.Text;
 import javafx.scene.text.TextBoundsType;
 import org.example.kanmi.arena.Arena;
+import org.example.kanmi.collectibles.Freeze;
 import org.example.kanmi.enemies.DumbEnemy;
+import org.example.kanmi.enemies.Enemy;
 import org.example.kanmi.enemies.SmartEnemy;
 import org.example.kanmi.gameobject.GameObject;
 import org.example.kanmi.indicators.EnergyIndicator;
@@ -36,21 +38,26 @@ public class Game extends Scene {
     private class ItemGenerator extends IntervalTimer {
         public interface Producer {GameObject produce();}
         private final long period;
+        private final double probability;
         private final int initial;
         private final Producer producer;
         private long cur = 0;
 
-        public ItemGenerator(long period, int initial, Producer producer) {
+        public ItemGenerator(long period, double probability, int initial, Producer producer) {
             this.period = period;
+            this.probability = probability;
             this.initial = initial;
             this.producer = producer;
+        }
+        public ItemGenerator(long period, int initial, Producer producer) {
+            this(period, 1, initial, producer);
         }
         @Override
         public void handleInterval(long interval) {
             cur += interval;
             if (cur < period) return;
             cur -= period;
-            generate();
+            if (probability >= 1 || Math.random() < probability) generate();
         }
         public void init() {
             for (int i = 0; i < initial; i++) generate();
@@ -82,6 +89,7 @@ public class Game extends Scene {
                 else return Coin.goldCoin();
             }),
             new ItemGenerator(12000, 4, Energy::new),
+            new ItemGenerator(5000, 0.3, 1, Freeze::new),
             new ItemGenerator(Long.MAX_VALUE, 3, DumbEnemy::new),
             new ItemGenerator(Long.MAX_VALUE, 1, SmartEnemy::new)
     );
@@ -176,6 +184,10 @@ public class Game extends Scene {
                         root3D.getChildren().remove(go);
                     }
                 }
+                if (unfreeze != null) {
+                    unfreeze -= interval;
+                    if (unfreeze <= 0) unfreeze();
+                }
                 if (state == State.PENDING_STOP) Game.this.stop();
             }
         };
@@ -203,6 +215,24 @@ public class Game extends Scene {
         resultScreen.setBackround(Utils.changeOpacity(Color.WHITE, 0.5f));
         resultScreen.addAll(gameOverText, scoreText, back);
         root2D.getChildren().add(resultScreen);
+    }
+
+    private static long FREEZE_TIME = 10000;
+    //Millis till unfreeze.
+    private Long unfreeze = null;
+    public void freeze() {
+        if (unfreeze == null)
+            for (GameObject go: objects)
+                if (go instanceof Enemy)
+                    ((Enemy) go).freeze();
+        unfreeze = FREEZE_TIME;
+    }
+    public void unfreeze() {
+        if (unfreeze == null) return;
+        unfreeze = null;
+        for (GameObject go: objects)
+            if (go instanceof Enemy)
+                ((Enemy) go).unfreeze();
     }
 
 }

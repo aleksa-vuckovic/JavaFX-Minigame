@@ -49,7 +49,7 @@ public class Player extends SelfMovingGameObject {
                 case D -> direction = direction.add(new Point3D(1, 0, 0));
             }
         }
-        motor = direction.normalize().multiply(speed);
+        setMotor(direction.normalize().multiply(speed));
     }
 
     public Player(double radius, double height, double speed, double energyExpenditure) {

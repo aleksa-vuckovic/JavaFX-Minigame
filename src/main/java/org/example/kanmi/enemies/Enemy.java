@@ -10,6 +10,21 @@ import org.example.kanmi.player.Player;
 
 public class Enemy extends SelfMovingGameObject {
 
+    private Point3D savedMotor = null;
+    public void freeze() {
+        if (savedMotor != null) return;
+        savedMotor = getMotor();
+        setMotor(Point3D.ZERO);
+    }
+    public boolean frozen() {
+        return savedMotor != null;
+    }
+    public void unfreeze() {
+        if (savedMotor == null) return;
+        setMotor(savedMotor);
+        savedMotor = null;
+    }
+
     @Override
     public void interact(GameObject go) {
         if (go instanceof Collectible || go instanceof BarrierObject) { go.interact(this); return; }
