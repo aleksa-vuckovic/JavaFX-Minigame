@@ -60,9 +60,17 @@ public abstract class GameObject extends Group {
     public GameObject() {
         getTransforms().addAll(position);
     }
+
+    /**
+     * @return Object bounds in game coordinates.
+     */
     public Bounds getBounds() {
         return localToScene(getBoundsInLocal());
     }
+
+    /**
+     * @return Object center in game coordinates.
+     */
     public Point3D getCenter() {
         return Utils.center(getBounds());
     }

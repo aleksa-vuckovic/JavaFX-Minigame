@@ -63,7 +63,7 @@ public class Player extends SelfMovingGameObject {
         position.setY(-height/2);
     }
     public static Player getRegularPlayer() {
-         Player ret = new Player(15,100,0.1, 0.1/1000);
+         Player ret = new Player(15,100, Game.PLAYER_SPEED, 0.1/1000);
          ret.setMass(100);
          return ret;
     }

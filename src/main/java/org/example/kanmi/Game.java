@@ -14,6 +14,7 @@ import javafx.scene.text.Text;
 import javafx.scene.text.TextBoundsType;
 import org.example.kanmi.arena.Arena;
 import org.example.kanmi.enemies.DumbEnemy;
+import org.example.kanmi.enemies.SmartEnemy;
 import org.example.kanmi.gameobject.GameObject;
 import org.example.kanmi.indicators.EnergyIndicator;
 import org.example.kanmi.indicators.TimeIndicator;
@@ -31,6 +32,7 @@ public class Game extends Scene {
      * How many degrees per pixel of mouse movement.
      */
     private static final double MOUSE_SENSITIVITY = 0.5;
+    public static final double PLAYER_SPEED = 0.1;
     private class ItemGenerator extends IntervalTimer {
         public interface Producer {GameObject produce();}
         private final long period;
@@ -80,7 +82,8 @@ public class Game extends Scene {
                 else return Coin.goldCoin();
             }),
             new ItemGenerator(12000, 4, Energy::new),
-            new ItemGenerator(Long.MAX_VALUE, 3, DumbEnemy::new)
+            new ItemGenerator(Long.MAX_VALUE, 3, DumbEnemy::new),
+            new ItemGenerator(Long.MAX_VALUE, 1, SmartEnemy::new)
     );
     private final TimeIndicator timeIndicator = new TimeIndicator();
     public enum State {
@@ -131,6 +134,7 @@ public class Game extends Scene {
         root2D.getChildren().add(ei);
         scene3D.setCamera(player.getCamera());
     }
+    public Player getPlayer() { return player; }
 
     public void onKeyEvent(KeyEvent keyEvent) {
         if (state != State.PLAYING) return;

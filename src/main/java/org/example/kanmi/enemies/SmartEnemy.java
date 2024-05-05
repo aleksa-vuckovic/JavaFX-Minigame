@@ -1,34 +1,26 @@
 package org.example.kanmi.enemies;
 
 import javafx.geometry.Point3D;
-import javafx.scene.effect.Light;
 import javafx.scene.image.Image;
 import javafx.scene.paint.Color;
 import javafx.scene.paint.PhongMaterial;
-import javafx.scene.shape.Box;
 import javafx.scene.shape.Cylinder;
 import javafx.scene.transform.Rotate;
 import javafx.scene.transform.Translate;
 import org.example.kanmi.Game;
 import org.example.kanmi.IntervalTimer;
-import org.example.kanmi.Utils;
-import org.example.kanmi.collectibles.Collectible;
-import org.example.kanmi.gameobject.BarrierObject;
-import org.example.kanmi.gameobject.GameObject;
-import org.example.kanmi.gameobject.SelfMovingGameObject;
 import org.example.kanmi.misc.Cone;
-import org.example.kanmi.player.Player;
 
-public class DumbEnemy extends Enemy {
+public class SmartEnemy extends Enemy {
 
     private static double RADIUS = 20;
     private static double HEIGHT = 100;
     private static double PRICK_COUNT = 50;
-
     private Rotate rotate;
     private IntervalTimer timer;
-    public DumbEnemy() {
-        PhongMaterial mat = new PhongMaterial(Color.YELLOW);
+
+    public SmartEnemy() {
+        PhongMaterial mat = new PhongMaterial(Color.RED);
         mat.setDiffuseMap(new Image("spikes.jpeg"));
 
         Cylinder cylinder = new Cylinder(RADIUS, HEIGHT);
@@ -51,7 +43,7 @@ public class DumbEnemy extends Enemy {
 
         rotate = new Rotate(0, Rotate.Y_AXIS);
         getTransforms().add(rotate);
-        setMotor(new Point3D(0, 0, 1).multiply(Game.PLAYER_SPEED/2));
+        setMotor(new Point3D(0, 0, 1).multiply(0.4*Game.PLAYER_SPEED));
         setMass(100);
     }
 
@@ -59,13 +51,13 @@ public class DumbEnemy extends Enemy {
     public void start(Game game) {
         super.start(game);
         timer = new IntervalTimer() {
-            long passed = 0;
             @Override
             public void handleInterval(long interval) {
-                passed += interval;
-                if (passed < 2000) return;
-                passed -= 2000;
-                double angle = Math.random()*360;
+                rotate.setAngle(0);
+                Point3D direction = sceneToLocal(game.getPlayer().getCenter()).normalize();
+                direction = new Point3D(direction.getX(), 0, direction.getZ());
+                double angle = direction.angle(0,0,1);
+                angle *= Math.signum(direction.getX());
                 rotate.setAngle(angle);
             }
         };
@@ -77,18 +69,4 @@ public class DumbEnemy extends Enemy {
         super.stop();
         timer.stop();
     }
-
-
 }
-/**
- * Bio jednom jedan decak Janko. Vole je da plese. u JEDNOM PLESNOM TURNIRU OSVOJIO JE TROFEJ. Medjutim,
- * kada je stigao kuci video je da je u trofeju mali patuljak. Mama i Tata su mu cestitali i kupili mu plesni podijum.
- * Ali on se toliko umprio da je legao da spava. Sanjao je jedan cudan san. Kako je vilenjak dao Janku mapu,
- * potragu za maglom. Marko je iskocio brzo kroz prozor, uzeo ranac koji je bio u basti, uzeo flasicu koja je bila u rancu,
- * i npunio je vodom koja je bila iz cesme, a cesma je bila u dvoristu. Krenuo je u potragu, ali je bila toliko duga da je
- * morao da popije malo vode, i onda je krenuo. Video je maglu i usao u nju i cuo glas mame, "Marko marko, ajde da jedes".
- * Marko je, posto je nije video, jako otvorio oci, i onda se probudio jer je jako otvorio oci, orvorio je stvarno oci,
- * i probudio se. Otisao je kod mame, za sto, i krenuo da jede. Mama kada je pitala Marka, gde su ti napocare, rekao je
- * sad cu da odem kada pojedem rucak. I kada je pojeo rucak stavio je naocare. Pogledao je u trofej i shvatio je
- * da je samo posto nije imao naocare video patuljka.
- */
