@@ -126,6 +126,20 @@ public class Utils {
         return Color.color(color.getRed(), color.getGreen(), color.getBlue(), opacity);
     }
 
+    /**
+     * @param lightness How much lighter, on a scale of 0-1.
+     */
+    public static Color lighter(Color color, double lightness) {
+        lightness = 1-lightness;
+        double red = 1-color.getRed();
+        double green = 1-color.getGreen();
+        double blue = 1-color.getBlue();
+        red = 1 - lightness*red;
+        green = 1 - lightness*green;
+        blue = 1 - lightness*blue;
+        return Color.color(red, green, blue);
+    }
+
     public static Point2D getCirclePoint(int divisions, int i, double radius, double offset) {
         double angle = 360.0*i/divisions;
         angle += offset*360.0/divisions;

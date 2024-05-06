@@ -17,7 +17,6 @@ public class TimeIndicator extends Group {
     TextBox text;
     private long time = 0;
     private IntervalTimer timer;
-    private Translate position;
 
     private String format(long timeNano) {
         long secs = timeNano/1000000000;
@@ -32,8 +31,6 @@ public class TimeIndicator extends Group {
         text.setHeight(HEIGHT);
         text.setTranslateX(-WIDTH);
         getChildren().addAll(text);
-        this.position = new Translate();
-        getTransforms().addAll(this.position);
         this.timer = new IntervalTimer(IntervalTimer.Precision.NANO) {
             @Override
             public void handleInterval(long interval) {
@@ -54,8 +51,4 @@ public class TimeIndicator extends Group {
         text.setContent(format(time));
     }
 
-    public void setPosition(Point2D position) {
-        this.position.setX(position.getX());
-        this.position.setY(position.getY());
-    }
 }

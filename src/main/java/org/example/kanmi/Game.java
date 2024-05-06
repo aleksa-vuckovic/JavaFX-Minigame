@@ -20,6 +20,7 @@ import org.example.kanmi.enemies.Enemy;
 import org.example.kanmi.enemies.SmartEnemy;
 import org.example.kanmi.gameobject.GameObject;
 import org.example.kanmi.indicators.EnergyIndicator;
+import org.example.kanmi.indicators.FreezeIndicator;
 import org.example.kanmi.indicators.HealthIndicator;
 import org.example.kanmi.indicators.TimeIndicator;
 import org.example.kanmi.collectibles.Coin;
@@ -94,7 +95,7 @@ public class Game extends Scene {
                 else return Coin.goldCoin();
             }),
             new ItemGenerator(12000, 4, Energy::new),
-            new ItemGenerator(5000, 0.3, 1, Freeze::new),
+            new ItemGenerator(5000, 0.3, 10, Freeze::new),
             new ItemGenerator(Long.MAX_VALUE, 3, DumbEnemy::new),
             new ItemGenerator(Long.MAX_VALUE, 1, SmartEnemy::new),
             new ItemGenerator(10000, 0.2, 1, Health::new)
@@ -113,8 +114,9 @@ public class Game extends Scene {
 
         addEventHandler(KeyEvent.ANY, this::onKeyEvent);
         addEventHandler(MouseEvent.ANY, this::onMouseEvent);
-        root2D.getChildren().add(timeIndicator);
-        timeIndicator.setPosition(new Point2D(WIDTH, 0));
+        root2D.getChildren().addAll(timeIndicator, freezeIndicator);
+        timeIndicator.setTranslateX(WIDTH);
+        freezeIndicator.setTranslateX(10); freezeIndicator.setTranslateY(100); freezeIndicator.reset();
         AmbientLight light = new AmbientLight(Color.WHITE);
         root3D.getChildren().add(light);
     }
@@ -199,10 +201,10 @@ public class Game extends Scene {
                         root3D.getChildren().remove(go);
                     }
                 }
-                if (unfreeze != null) {
-                    unfreeze -= interval;
-                    if (unfreeze <= 0) unfreeze();
-                }
+                if (freezeIndicator.dec(interval))
+                    for (GameObject go: objects)
+                        if (go instanceof Enemy)
+                            ((Enemy) go).unfreeze();
                 if (state == State.PENDING_STOP) Game.this.stop();
             }
         };
@@ -232,22 +234,13 @@ public class Game extends Scene {
         root2D.getChildren().add(resultScreen);
     }
 
-    private static long FREEZE_TIME = 10000;
-    //Millis till unfreeze.
-    private Long unfreeze = null;
+
+    private FreezeIndicator freezeIndicator = new FreezeIndicator();
     public void freeze() {
-        if (unfreeze == null)
+        if (freezeIndicator.inc())
             for (GameObject go: objects)
                 if (go instanceof Enemy)
                     ((Enemy) go).freeze();
-        unfreeze = FREEZE_TIME;
-    }
-    public void unfreeze() {
-        if (unfreeze == null) return;
-        unfreeze = null;
-        for (GameObject go: objects)
-            if (go instanceof Enemy)
-                ((Enemy) go).unfreeze();
     }
 
 }
