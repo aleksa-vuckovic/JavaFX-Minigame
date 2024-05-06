@@ -25,11 +25,13 @@ public abstract class Arena extends BarrierObject {
         mat = new PhongMaterial(Color.INDIANRED);
         mat.setDiffuseMap(brickImage);
         arena.setWallMaterial(mat);
+        arena.setObstacleMaterial(mat);
         return arena;
     }
 
     public abstract void setGroundMaterial(Material mat);
     public abstract void setWallMaterial(Material mat);
+    public abstract void setObstacleMaterial(Material mat);
 
 
     /**

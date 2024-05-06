@@ -6,15 +6,18 @@ import javafx.scene.paint.Color;
 import javafx.scene.paint.Material;
 import javafx.scene.paint.PhongMaterial;
 import javafx.scene.shape.Box;
+import javafx.scene.transform.Rotate;
 import org.example.kanmi.gameobject.GameObject;
 
 public class RectangleArena extends Arena {
+
+    private final static double OBSTACLE_HEIGHT = 75;
 
     private Wall ground;
     private Wall[] walls;
     private Box innerSpace;
 
-    private Wall[] obstacles;
+    private Obstacle[] obstacles;
 
     public RectangleArena(double width, double length,
                           double wallThickness, double wallHeight) {
@@ -37,13 +40,17 @@ public class RectangleArena extends Arena {
         walls[3].setTranslateX(wallThickness/2+width/2);
         getChildren().addAll(walls);
 
-        obstacles = new Wall[10];
+        obstacles = new Obstacle[12];
         Image stoneImage = new Image("stone.jpg");
         PhongMaterial mat = new PhongMaterial(Color.GRAY);
         mat.setDiffuseMap(stoneImage);
-        for (int i = 0; i < 10; i++) {
-            obstacles[i] = new Wall(width/20, length/20, wallHeight*0.7);
+        for (int i = 0; i < 12; i++) {
+            double p = Math.random();
+            if (p < 1.0/3) obstacles[i] = new Wall(OBSTACLE_HEIGHT, OBSTACLE_HEIGHT, OBSTACLE_HEIGHT);
+            else if (p < 2.0/3) obstacles[i] = new LWall(OBSTACLE_HEIGHT*2, OBSTACLE_HEIGHT*1.6, OBSTACLE_HEIGHT*0.8);
+            else obstacles[i] = new PWall(OBSTACLE_HEIGHT, OBSTACLE_HEIGHT*0.8, OBSTACLE_HEIGHT*0.2);
             obstacles[i].setPosition(getRandomLocation());
+            obstacles[i].getTransforms().add(new Rotate(Math.random()*360, Rotate.Y_AXIS));
             obstacles[i].setMaterial(mat);
         }
         getChildren().addAll(obstacles);
@@ -61,6 +68,8 @@ public class RectangleArena extends Arena {
     public void setWallMaterial(Material mat) {
         for (Wall wall: walls) wall.setMaterial(mat);
     }
+    @Override
+    public void setObstacleMaterial(Material mat) { for (Obstacle obstacle: obstacles) obstacle.setMaterial(mat);}
 
     /**
      * Return true if the object is within the arena's bounds walls on the sides,
@@ -75,7 +84,7 @@ public class RectangleArena extends Arena {
     public void interact(GameObject other) {
         ground.interact(other);
         for (Wall wall: walls) wall.interact(other);
-        for (Wall wall: obstacles) wall.interact(other);
+        for (Obstacle obstacle: obstacles) obstacle.interact(other);
     }
 
     @Override

@@ -141,9 +141,14 @@ public class Game extends Scene {
         add(player);
         root2D.getChildren().add(player.getScoreIndicator());
         EnergyIndicator ei = player.getEnergyIndicator();
-        ei.setCentered(WIDTH);
         root2D.getChildren().add(ei);
         scene3D.setCamera(player.getCamera());
+
+        Column.HorizontalAlignment alignment = Column.HorizontalAlignment.center();
+        alignment.setWidth(WIDTH);
+        ei.setTranslateX(alignment.getX(ei));
+        ei.setTranslateY(20);
+
     }
     public Player getPlayer() { return player; }
 
@@ -209,7 +214,7 @@ public class Game extends Scene {
         timer.stop();
         int score = player.getScoreIndicator().getScore();
 
-        Column resultScreen = new Column(WIDTH, HEIGHT, Column.HorizontalAlignment.CENTER, Column.VerticalArrangement.center(20));
+        Column resultScreen = new Column(WIDTH, HEIGHT, Column.HorizontalAlignment.center(), Column.VerticalArrangement.center(20));
         Text gameOverText = new Text("GAME OVER");
         Text scoreText = new Text("Score: " + score);
         gameOverText.setFont(Font.font("Arial", 40));

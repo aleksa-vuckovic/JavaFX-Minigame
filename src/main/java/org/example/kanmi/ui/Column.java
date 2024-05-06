@@ -12,36 +12,43 @@ import java.util.List;
 
 public class Column extends Group {
 
-    public enum HorizontalAlignment {
-        LEFT(), CENTER(), RIGHT();
+    public static class HorizontalAlignment {
+        private enum Type {LEFT, CENTER, RIGHT}
+        public static HorizontalAlignment left() { return new HorizontalAlignment(Type.LEFT); }
+        public static HorizontalAlignment center() { return new HorizontalAlignment(Type.CENTER); }
+        public static HorizontalAlignment right() { return new HorizontalAlignment(Type.RIGHT); }
+        Type type;
         private double width = 0;
+        HorizontalAlignment(Type type) {
+            this.type = type;
+        }
         public void setWidth(double width) { this.width = width; }
         public double getX(Node node) {
             Bounds bounds = node.getBoundsInLocal();
-            if (this == LEFT) return 0 - bounds.getMaxX();
-            else if (this == CENTER) return width/2 - bounds.getCenterX();
+            if (type == Type.LEFT) return 0 - bounds.getMaxX();
+            else if (type == Type.CENTER) return width/2 - bounds.getCenterX();
             else return width - bounds.getMaxX();
         }
     }
     public static class VerticalArrangement {
 
-        private enum Side {TOP, CENTER, BOTTOM}
-        private Side side;
+        private enum Type {TOP, CENTER, BOTTOM}
+        private Type type;
         private double spacing;
         private double height;
         public static VerticalArrangement top(double spacing) {
-            return new VerticalArrangement(Side.TOP, spacing);
+            return new VerticalArrangement(Type.TOP, spacing);
         }
         public static VerticalArrangement center(double spacing) {
-            return new VerticalArrangement(Side.CENTER, spacing);
+            return new VerticalArrangement(Type.CENTER, spacing);
         }
         public static VerticalArrangement bottom(double spacing) {
-            return new VerticalArrangement(Side.BOTTOM, spacing);
+            return new VerticalArrangement(Type.BOTTOM, spacing);
         }
 
         public void setHeight(double height) { this.height = height; }
-        public VerticalArrangement(Side side, double spacing) {
-            this.side = side;
+        public VerticalArrangement(Type type, double spacing) {
+            this.type = type;
             this.spacing = spacing;
         }
 
@@ -51,8 +58,8 @@ public class Column extends Group {
             totalHeight += spacing;
 
             double cur;
-            if (side == Side.TOP) cur = spacing;
-            else if (side == Side.CENTER) cur = height/2 - totalHeight/2 + spacing;
+            if (type == Type.TOP) cur = spacing;
+            else if (type == Type.CENTER) cur = height/2 - totalHeight/2 + spacing;
             else cur = height - totalHeight + spacing;
 
             List<Double> result = new ArrayList<>();

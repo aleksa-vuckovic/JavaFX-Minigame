@@ -115,4 +115,8 @@ public class Utils {
         return new Rotate(angle).transform(radius, 0);
     }
 
+    public static Point3D transformVector(Point3D vector, Transform transform) {
+        return transform.transform(vector).subtract(transform.transform(Point3D.ZERO));
+    }
+
 }
