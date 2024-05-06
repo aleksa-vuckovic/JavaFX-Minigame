@@ -14,6 +14,7 @@ import javafx.scene.text.Text;
 import javafx.scene.text.TextBoundsType;
 import org.example.kanmi.arena.Arena;
 import org.example.kanmi.collectibles.Freeze;
+import org.example.kanmi.collectibles.Health;
 import org.example.kanmi.enemies.DumbEnemy;
 import org.example.kanmi.enemies.Enemy;
 import org.example.kanmi.enemies.SmartEnemy;
@@ -95,7 +96,8 @@ public class Game extends Scene {
             new ItemGenerator(12000, 4, Energy::new),
             new ItemGenerator(5000, 0.3, 1, Freeze::new),
             new ItemGenerator(Long.MAX_VALUE, 3, DumbEnemy::new),
-            new ItemGenerator(Long.MAX_VALUE, 1, SmartEnemy::new)
+            new ItemGenerator(Long.MAX_VALUE, 1, SmartEnemy::new),
+            new ItemGenerator(10000, 0.2, 1, Health::new)
     );
     private final TimeIndicator timeIndicator = new TimeIndicator();
     public enum State {
