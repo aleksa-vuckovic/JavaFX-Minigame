@@ -19,6 +19,7 @@ import org.example.kanmi.enemies.Enemy;
 import org.example.kanmi.enemies.SmartEnemy;
 import org.example.kanmi.gameobject.GameObject;
 import org.example.kanmi.indicators.EnergyIndicator;
+import org.example.kanmi.indicators.HealthIndicator;
 import org.example.kanmi.indicators.TimeIndicator;
 import org.example.kanmi.collectibles.Coin;
 import org.example.kanmi.collectibles.Energy;
@@ -124,11 +125,15 @@ public class Game extends Scene {
         root3D.getChildren().add(go);
         objects.add(go);
     }
+    private void add(GameObject go, int i) {
+        root3D.getChildren().add(go);
+        objects.add(i, go);
+    }
 
     public void setArena(Arena arena) {
         remove(this.arena);
         this.arena = arena;
-        add(arena);
+        add(arena, 0);
     }
     public Arena getArena() { return arena; }
     public void setPlayer(Player player) {
@@ -136,18 +141,18 @@ public class Game extends Scene {
         if (this.player != null) {
             root2D.getChildren().remove(this.player.getScoreIndicator());
             root2D.getChildren().remove(this.player.getEnergyIndicator());
+            root2D.getChildren().remove(this.player.getHealthIndicator());
         }
         this.player = player;
         add(player);
         root2D.getChildren().add(player.getScoreIndicator());
         EnergyIndicator ei = player.getEnergyIndicator();
+        ei.setCentered(WIDTH); ei.setTranslateY(30);
         root2D.getChildren().add(ei);
+        HealthIndicator hi = player.getHealthIndicator();
+        hi.setCentered(WIDTH); ei.setTranslateY(10);
+        root2D.getChildren().add(hi);
         scene3D.setCamera(player.getCamera());
-
-        Column.HorizontalAlignment alignment = Column.HorizontalAlignment.center();
-        alignment.setWidth(WIDTH);
-        ei.setTranslateX(alignment.getX(ei));
-        ei.setTranslateY(20);
 
     }
     public Player getPlayer() { return player; }

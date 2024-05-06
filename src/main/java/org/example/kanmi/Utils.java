@@ -87,7 +87,7 @@ public class Utils {
         } catch(Exception e) {}
     }
 
-    public static void obstacleCollision(BarrierObject a, MovingGameObject b) {
+    public static void obstacleBarrierCollision(BarrierObject a, MovingGameObject b) {
         Point3D impact = a.getImpact(b);
         if (impact == null) return;
         Point3D direction = b.getDirection();
@@ -98,6 +98,23 @@ public class Utils {
         try {
             direction = align.inverseTransform(direction);
             b.setDirection(direction);
+        } catch(Exception e) {e.printStackTrace();}
+    }
+
+    public static void obstaclePointCollision(MovingGameObject a, MovingGameObject b) {
+        Bounds intersect = Utils.intersection(a.getBounds(), b.getBounds());
+        if (intersect == null) return;
+        Point3D normal = a.getCenter().subtract(b.getCenter());
+        Transform align = Utils.alignTransform(normal, Rotate.X_AXIS);
+        Point3D aDirection = align.transform(a.getDirection());
+        Point3D bDirection = align.transform(b.getDirection());
+        if (aDirection.getX() < 0) aDirection = new Point3D(0, aDirection.getY(), aDirection.getZ());
+        if (bDirection.getX() > 0) bDirection = new Point3D(0, bDirection.getY(), bDirection.getZ());
+        try {
+            aDirection = align.inverseTransform(aDirection);
+            bDirection = align.inverseTransform(bDirection);
+            a.setDirection(aDirection);
+            b.setDirection(bDirection);
         } catch(Exception e) {e.printStackTrace();}
     }
 

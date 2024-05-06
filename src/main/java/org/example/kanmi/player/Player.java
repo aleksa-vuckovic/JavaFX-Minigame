@@ -12,6 +12,7 @@ import org.example.kanmi.Game;
 import org.example.kanmi.gameobject.GameObject;
 import org.example.kanmi.gameobject.SelfMovingGameObject;
 import org.example.kanmi.indicators.EnergyIndicator;
+import org.example.kanmi.indicators.HealthIndicator;
 import org.example.kanmi.indicators.ScoreIndicator;
 
 import java.util.HashSet;
@@ -20,6 +21,7 @@ import java.util.Set;
 public class Player extends SelfMovingGameObject {
 
     private static long JUMP_INTERVAL = 1000;
+    private static double HEALTH_LOSS = 0.2/1000;
     private final Cylinder bounds;
     private final PlayerHead head = new PlayerHead();
     /**
@@ -32,6 +34,7 @@ public class Player extends SelfMovingGameObject {
     private double energyExpenditure;
     private ScoreIndicator scoreIndicator = new ScoreIndicator();
     private EnergyIndicator energyIndicator = new EnergyIndicator();
+    private HealthIndicator healthIndicator = new HealthIndicator();
     private final Rotate rotation = new Rotate(0, Rotate.Y_AXIS);
 
     private final Set<KeyCode> controls = new HashSet<>();
@@ -77,16 +80,19 @@ public class Player extends SelfMovingGameObject {
     }
     @Override
     public Point3D getMotor() {
-        double e = energyIndicator.getEnergy();
+        double e = energyIndicator.getValue();
         e = 1-Math.pow(e-1, 6);
         return super.getMotor().multiply(e);
     }
     @Override
     public void update(long interval) {
+        super.update(interval);
         tillJump -= interval;
         if (getMotor().magnitude() > 0.001) energyIndicator.dec(interval*energyExpenditure);
         else energyIndicator.inc(interval*energyExpenditure*2);
-        super.update(interval);
+        /*healthIndicator.dec(enemies*HEALTH_LOSS*interval);
+        enemies = 0;
+        if (healthIndicator.getValue() <= 0) game.gameOver();*/
     }
     public PerspectiveCamera getCamera() {
         return head.getCamera();
@@ -97,6 +103,9 @@ public class Player extends SelfMovingGameObject {
     }
     public EnergyIndicator getEnergyIndicator() {
         return energyIndicator;
+    }
+    public HealthIndicator getHealthIndicator() {
+        return healthIndicator;
     }
 
     @Override
@@ -112,5 +121,15 @@ public class Player extends SelfMovingGameObject {
         Point3D dir = getDirection();
         dir = new Point3D(dir.getX(), dir.getY() - 0.5, dir.getZ());
         setDirection(dir);
+    }
+
+
+    private int enemies = 0;
+    public void enemyTouch() {
+        enemies += 1;
+    }
+    public void enemyHit() {
+        healthIndicator.dec(0.2);
+        if (healthIndicator.getValue() <= 0) game.gameOver();
     }
 }

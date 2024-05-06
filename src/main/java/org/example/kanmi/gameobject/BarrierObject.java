@@ -1,8 +1,6 @@
 package org.example.kanmi.gameobject;
 
 import javafx.geometry.Point3D;
-import javafx.scene.transform.Rotate;
-import javafx.scene.transform.Transform;
 import org.example.kanmi.Utils;
 
 /**
@@ -15,7 +13,7 @@ public abstract class BarrierObject extends GameObject {
     @Override
     public void interact(GameObject other) {
         if (other instanceof InertialGameObject) Utils.elasticBarrierCollision(this, (InertialGameObject)other);
-        else if (other instanceof SelfMovingGameObject) Utils.obstacleCollision(this, (SelfMovingGameObject)other);
+        else if (other instanceof SelfMovingGameObject) Utils.obstacleBarrierCollision(this, (SelfMovingGameObject)other);
     }
 
     /**
