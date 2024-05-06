@@ -18,7 +18,7 @@ public class RectangleArena extends Arena {
 
     public RectangleArena(double width, double length,
                           double wallThickness, double wallHeight) {
-        ground = new Wall(width, length, 2);
+        ground = new Wall(width, length, 30); ground.setTranslateY(30);
         getChildren().addAll(ground);
         innerSpace = new Box(width, 100000, length);
 
@@ -73,6 +73,7 @@ public class RectangleArena extends Arena {
 
     @Override
     public void interact(GameObject other) {
+        ground.interact(other);
         for (Wall wall: walls) wall.interact(other);
         for (Wall wall: obstacles) wall.interact(other);
     }

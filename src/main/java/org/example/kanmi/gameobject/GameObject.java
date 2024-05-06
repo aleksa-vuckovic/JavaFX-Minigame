@@ -11,8 +11,6 @@ import org.example.kanmi.Utils;
  * Represents any game object.
  * Each game object has a position inside the parent coordinate system.
  *  This is usually the scene coordinate system.
- * Each game object has a mass.
- * Each game object has a motion vector, in units of pixels per millisecond.
  * Each game object has reference to the containing Game object.
  * Each game object has a lifecycle, starting with start(Game), and ending with stop().
  * Each game object can interact with another.
@@ -25,38 +23,7 @@ public abstract class GameObject extends Group {
         position.setY(pos.getY());
         position.setZ(pos.getZ());
     }
-    protected double mass = Double.MAX_VALUE;
-    public double getMass() { return mass; }
-    public void setMass(double mass) { this.mass = mass; }
-    public void move(Point3D amount) {
-        position.setX(position.getX() + amount.getX());
-        position.setY(position.getY() + amount.getY());
-        position.setZ(position.getZ() + amount.getZ());
-    }
-    /**
-     * The current direction and speed of movement,
-     * in pixels per second.
-     */
-    protected Point3D direction = Point3D.ZERO;
-    /**
-     * @return Direction (and speed) in game coordinate system.
-     */
-    public Point3D getDirection() {
-        return direction;
-    }
-    /**
-     * Set direction, given in game coordinate system.
-     */
-    public void setDirection(Point3D dir) {
-        /*
-        try {
-            dir = getLocalToSceneTransform().inverseTransform(dir);
-            Point3D ref = getLocalToSceneTransform().inverseTransform(Point3D.ZERO);
-            direction = dir.subtract(ref);
-        } catch(Exception e) {}
-        */
-         direction = dir;
-    }
+
     public GameObject() {
         getTransforms().addAll(position);
     }
@@ -115,6 +82,16 @@ public abstract class GameObject extends Group {
     public boolean stopped() {
         return this.game == null;
     }
+
+    /**
+     * Called on each frame before the interactions, within
+     * the main Game timer.
+     * Should be used for updates whose order in relation to
+     * interactions is important.
+     * Otherwise, separate timers can be used for each game object.
+     * @param interval Milliseconds since last update.
+     */
+    public void update(long interval) {}
 }
 
 /**

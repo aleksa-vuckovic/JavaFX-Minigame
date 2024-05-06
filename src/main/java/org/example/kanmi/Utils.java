@@ -8,10 +8,7 @@ import javafx.scene.paint.Color;
 import javafx.scene.text.Text;
 import javafx.scene.transform.*;
 import javafx.util.Pair;
-import org.example.kanmi.gameobject.BarrierObject;
-import org.example.kanmi.gameobject.GameObject;
-import org.example.kanmi.gameobject.InertialGameObject;
-import org.example.kanmi.gameobject.SelfMovingGameObject;
+import org.example.kanmi.gameobject.*;
 
 public class Utils {
 
@@ -60,7 +57,7 @@ public class Utils {
     }
 
 
-    public static void elasticPointCollision(GameObject a, GameObject b) {
+    public static void elasticPointCollision(MovingGameObject a, MovingGameObject b) {
         Bounds intersect = Utils.intersection(a.getBounds(), b.getBounds());
         if (intersect == null) return;
         double c1 = (a.getMass() - b.getMass())/(a.getMass() + b.getMass());
@@ -76,7 +73,7 @@ public class Utils {
         b.move(dirOther.normalize().multiply(rad));
     }
 
-    public static void elasticBarrierCollision(BarrierObject a, GameObject b) {
+    public static void elasticBarrierCollision(BarrierObject a, MovingGameObject b) {
         Point3D impact = a.getImpact(b);
         if (impact == null) return;
         Point3D direction = b.getDirection();
@@ -90,7 +87,7 @@ public class Utils {
         } catch(Exception e) {}
     }
 
-    public static void obstacleCollision(BarrierObject a, GameObject b) {
+    public static void obstacleCollision(BarrierObject a, MovingGameObject b) {
         Point3D impact = a.getImpact(b);
         if (impact == null) return;
         Point3D direction = b.getDirection();

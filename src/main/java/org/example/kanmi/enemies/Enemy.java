@@ -34,7 +34,7 @@ public class Enemy extends SelfMovingGameObject {
             game.gameOver();
         }
         else if (go instanceof Enemy) {
-            Utils.elasticPointCollision(this, go);
+            Utils.elasticPointCollision(this, (Enemy)go);
         }
     }
 }

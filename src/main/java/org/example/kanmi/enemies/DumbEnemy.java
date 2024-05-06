@@ -51,44 +51,18 @@ public class DumbEnemy extends Enemy {
 
         rotate = new Rotate(0, Rotate.Y_AXIS);
         getTransforms().add(rotate);
-        setMotor(new Point3D(0, 0, 1).multiply(Game.PLAYER_SPEED/2));
-        setMass(100);
+        setMotor(new Point3D(0, 0, 1).multiply(Game.PLAYER_SPEED*FRICTION_CONST));
+        setMass(Game.PLAYER_MASS);
     }
 
+    long switchTime = 0;
     @Override
-    public void start(Game game) {
-        super.start(game);
-        timer = new IntervalTimer() {
-            long passed = 0;
-            @Override
-            public void handleInterval(long interval) {
-                passed += interval;
-                if (passed < 2000) return;
-                passed -= 2000;
-                double angle = Math.random()*360;
-                rotate.setAngle(angle);
-            }
-        };
-        timer.start();
+    public void update(long interval) {
+        super.update(interval);
+        switchTime += interval;
+        if (switchTime < 2000) return;
+        switchTime -= 2000;
+        double angle = Math.random()*360;
+        rotate.setAngle(angle);
     }
-
-    @Override
-    public void stop() {
-        super.stop();
-        timer.stop();
-    }
-
-
 }
-/**
- * Bio jednom jedan decak Janko. Vole je da plese. u JEDNOM PLESNOM TURNIRU OSVOJIO JE TROFEJ. Medjutim,
- * kada je stigao kuci video je da je u trofeju mali patuljak. Mama i Tata su mu cestitali i kupili mu plesni podijum.
- * Ali on se toliko umprio da je legao da spava. Sanjao je jedan cudan san. Kako je vilenjak dao Janku mapu,
- * potragu za maglom. Marko je iskocio brzo kroz prozor, uzeo ranac koji je bio u basti, uzeo flasicu koja je bila u rancu,
- * i npunio je vodom koja je bila iz cesme, a cesma je bila u dvoristu. Krenuo je u potragu, ali je bila toliko duga da je
- * morao da popije malo vode, i onda je krenuo. Video je maglu i usao u nju i cuo glas mame, "Marko marko, ajde da jedes".
- * Marko je, posto je nije video, jako otvorio oci, i onda se probudio jer je jako otvorio oci, orvorio je stvarno oci,
- * i probudio se. Otisao je kod mame, za sto, i krenuo da jede. Mama kada je pitala Marka, gde su ti napocare, rekao je
- * sad cu da odem kada pojedem rucak. I kada je pojeo rucak stavio je naocare. Pogledao je u trofej i shvatio je
- * da je samo posto nije imao naocare video patuljka.
- */

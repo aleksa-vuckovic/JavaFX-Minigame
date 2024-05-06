@@ -8,9 +8,12 @@ import org.example.kanmi.IntervalTimer;
 import org.example.kanmi.Utils;
 
 /**
- * Movable object that has its own motor.
+ * Movable object that has its own moving force, with an opposing
+ * force proportional to the current speed of the object (and in the opposite direction).
+ * The maximum speed is achieved when these forces cancel out, or Fmotor = k*V.
+ * k is set to 0.01.
  */
-public abstract class SelfMovingGameObject extends GameObject {
+public abstract class SelfMovingGameObject extends MovingGameObject {
 
     /**
      * Preferred direction and speed, in the local coordinate system.
@@ -21,35 +24,11 @@ public abstract class SelfMovingGameObject extends GameObject {
         return getLocalToSceneTransform().transform(getMotor())
                 .subtract(getLocalToSceneTransform().transform(Point3D.ZERO));
     }
-    private IntervalTimer timer;
-
     public void setMotor(Point3D motor) { this.motor = motor; }
     public Point3D getMotor() {return motor;}
-
     @Override
-    public void interact(GameObject other) {
-        if (other instanceof BarrierObject) Utils.obstacleCollision((BarrierObject) other, this);
-        else Utils.elasticPointCollision(this, other);
-    }
-    @Override
-    public void start(Game game) {
-        super.start(game);
-        timer = new IntervalTimer() {
-            @Override
-            public void handleInterval(long interval) {
-            move(getDirection().multiply(interval));
-            //Reset direction until further interaction
-            setDirection(getSceneMotor());
-            }
-        };
-        timer.start();
-    }
-
-    @Override
-    public void stop() {
-        super.stop();
-        timer.stop();
-        timer = null;
+    public Point3D netForce() {
+        return super.netForce().add(getSceneMotor());
     }
 
 }

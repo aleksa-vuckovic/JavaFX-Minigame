@@ -17,7 +17,6 @@ public class SmartEnemy extends Enemy {
     private static double HEIGHT = 100;
     private static double PRICK_COUNT = 50;
     private Rotate rotate;
-    private IntervalTimer timer;
 
     public SmartEnemy() {
         PhongMaterial mat = new PhongMaterial(Color.RED);
@@ -43,30 +42,17 @@ public class SmartEnemy extends Enemy {
 
         rotate = new Rotate(0, Rotate.Y_AXIS);
         getTransforms().add(rotate);
-        setMotor(new Point3D(0, 0, 1).multiply(0.4*Game.PLAYER_SPEED));
+        setMotor(new Point3D(0, 0, 1).multiply(0.4*Game.PLAYER_SPEED*FRICTION_CONST));
         setMass(100);
     }
-
     @Override
-    public void start(Game game) {
-        super.start(game);
-        timer = new IntervalTimer() {
-            @Override
-            public void handleInterval(long interval) {
-                rotate.setAngle(0);
-                Point3D direction = sceneToLocal(game.getPlayer().getCenter()).normalize();
-                direction = new Point3D(direction.getX(), 0, direction.getZ());
-                double angle = direction.angle(0,0,1);
-                angle *= Math.signum(direction.getX());
-                rotate.setAngle(angle);
-            }
-        };
-        timer.start();
-    }
-
-    @Override
-    public void stop() {
-        super.stop();
-        timer.stop();
+    public void update(long interval) {
+        super.update(interval);
+        rotate.setAngle(0);
+        Point3D direction = sceneToLocal(game.getPlayer().getCenter()).normalize();
+        direction = new Point3D(direction.getX(), 0, direction.getZ());
+        double angle = direction.angle(0,0,1);
+        angle *= Math.signum(direction.getX());
+        rotate.setAngle(angle);
     }
 }

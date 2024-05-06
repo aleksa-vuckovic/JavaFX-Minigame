@@ -8,10 +8,8 @@ import javafx.scene.paint.Color;
 import javafx.scene.paint.PhongMaterial;
 import javafx.scene.shape.Cylinder;
 import javafx.scene.transform.Rotate;
-import javafx.scene.transform.Translate;
 import org.example.kanmi.Game;
 import org.example.kanmi.gameobject.GameObject;
-import org.example.kanmi.IntervalTimer;
 import org.example.kanmi.gameobject.SelfMovingGameObject;
 import org.example.kanmi.indicators.EnergyIndicator;
 import org.example.kanmi.indicators.ScoreIndicator;
@@ -21,6 +19,7 @@ import java.util.Set;
 
 public class Player extends SelfMovingGameObject {
 
+    private static long JUMP_INTERVAL = 1000;
     private final Cylinder bounds;
     private final PlayerHead head = new PlayerHead();
     /**
@@ -33,12 +32,14 @@ public class Player extends SelfMovingGameObject {
     private double energyExpenditure;
     private ScoreIndicator scoreIndicator = new ScoreIndicator();
     private EnergyIndicator energyIndicator = new EnergyIndicator();
-    private IntervalTimer timer;
     private final Rotate rotation = new Rotate(0, Rotate.Y_AXIS);
 
     private final Set<KeyCode> controls = new HashSet<>();
     public void keyEvent(KeyEvent keyEvent) {
-        if (keyEvent.getEventType() == KeyEvent.KEY_PRESSED) controls.add(keyEvent.getCode());
+        if (keyEvent.getEventType() == KeyEvent.KEY_PRESSED) {
+            controls.add(keyEvent.getCode());
+            if (keyEvent.getCode() == KeyCode.SPACE) jump();
+        }
         else if (keyEvent.getEventType() == KeyEvent.KEY_RELEASED) controls.remove(keyEvent.getCode());
         Point3D direction = Point3D.ZERO;
         for (KeyCode code: controls) {
@@ -49,7 +50,7 @@ public class Player extends SelfMovingGameObject {
                 case D -> direction = direction.add(new Point3D(1, 0, 0));
             }
         }
-        setMotor(direction.normalize().multiply(speed));
+        setMotor(direction.normalize().multiply(speed*FRICTION_CONST));
     }
 
     public Player(double radius, double height, double speed, double energyExpenditure) {
@@ -81,22 +82,11 @@ public class Player extends SelfMovingGameObject {
         return super.getMotor().multiply(e);
     }
     @Override
-    public void start(Game game) {
-        super.start(game);
-        timer = new IntervalTimer() {
-            @Override
-            public void handleInterval(long interval) {
-                if (!direction.equals(Point3D.ZERO)) energyIndicator.dec(interval*energyExpenditure);
-                else energyIndicator.inc(interval*energyExpenditure*2);
-            }
-        };
-        timer.start();
-    }
-    @Override
-    public void stop() {
-        super.stop();
-        timer.stop();
-        timer = null;
+    public void update(long interval) {
+        tillJump -= interval;
+        if (getMotor().magnitude() > 0.001) energyIndicator.dec(interval*energyExpenditure);
+        else energyIndicator.inc(interval*energyExpenditure*2);
+        super.update(interval);
     }
     public PerspectiveCamera getCamera() {
         return head.getCamera();
@@ -112,5 +102,15 @@ public class Player extends SelfMovingGameObject {
     @Override
     public void interact(GameObject other) {
         other.interact(this);
+    }
+
+
+    private long tillJump = 0;
+    public void jump() {
+        if (tillJump > 0) return;
+        tillJump = JUMP_INTERVAL;
+        Point3D dir = getDirection();
+        dir = new Point3D(dir.getX(), dir.getY() - 0.5, dir.getZ());
+        setDirection(dir);
     }
 }

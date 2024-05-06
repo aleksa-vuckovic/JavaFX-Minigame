@@ -30,11 +30,14 @@ import org.example.kanmi.ui.Column;
 import java.util.*;
 
 public class Game extends Scene {
+    public static final double PLAYER_SPEED = 0.1;
+    public static final double PLAYER_MASS = 100;
+    public static final double METER = 100;
     /**
      * How many degrees per pixel of mouse movement.
      */
     private static final double MOUSE_SENSITIVITY = 0.5;
-    public static final double PLAYER_SPEED = 0.1;
+
     private class ItemGenerator extends IntervalTimer {
         public interface Producer {GameObject produce();}
         private final long period;
@@ -162,9 +165,8 @@ public class Game extends Scene {
     }
     public void start() {
         state = State.PLAYING;
-        player.start(this);
-        arena.start(this);
         timeIndicator.start();
+        for (GameObject go: objects) go.start(this);
         for (ItemGenerator gen: generators) {
             gen.init();
             gen.start();
@@ -172,6 +174,7 @@ public class Game extends Scene {
         timer = new IntervalTimer() {
             @Override
             public void handleInterval(long interval) {
+                for (GameObject go: objects) go.update(interval);
                 for (int i = 0; i < objects.size(); i++)
                     for (int j = i + 1; j < objects.size(); j++)
                         objects.get(i).interact(objects.get(j));

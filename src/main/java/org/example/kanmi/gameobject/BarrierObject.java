@@ -14,8 +14,8 @@ public abstract class BarrierObject extends GameObject {
 
     @Override
     public void interact(GameObject other) {
-        if (other instanceof InertialGameObject) Utils.elasticBarrierCollision(this, other);
-        else if (other instanceof SelfMovingGameObject) Utils.obstacleCollision(this, other);
+        if (other instanceof InertialGameObject) Utils.elasticBarrierCollision(this, (InertialGameObject)other);
+        else if (other instanceof SelfMovingGameObject) Utils.obstacleCollision(this, (SelfMovingGameObject)other);
     }
 
     /**

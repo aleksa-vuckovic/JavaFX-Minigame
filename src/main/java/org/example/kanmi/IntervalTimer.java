@@ -22,9 +22,14 @@ public abstract class IntervalTimer extends AnimationTimer {
     public final void handle(long now) {
         now /= div;
         if (prev == 0) prev = now;
-        else if (prev == now) return;
+        if (prev == now) return;
         handleInterval(now - prev);
         prev = now;
+    }
+    @Override
+    public void stop() {
+        super.stop();
+        prev = 0;
     }
     public abstract void handleInterval(long interval);
 }
