@@ -62,9 +62,9 @@ public class Player extends SelfMovingGameObject {
         this.speed = speed;
         this.energyExpenditure = energyExpenditure;
         bounds = new Cylinder(radius, height);
-        bounds.setMaterial(new PhongMaterial(Color.GREEN));
-        //bounds.setMaterial(new PhongMaterial(Color.TRANSPARENT));
-        head.setHeight(height);///2);
+        //bounds.setMaterial(new PhongMaterial(Color.GREEN));
+        bounds.setMaterial(new PhongMaterial(Color.TRANSPARENT));
+        head.setHeight(height/2);
         getChildren().addAll(bounds, head);
         getTransforms().addAll(rotation);
         position.setY(-height/2);

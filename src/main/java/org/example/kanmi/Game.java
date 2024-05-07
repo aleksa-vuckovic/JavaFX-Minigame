@@ -7,8 +7,11 @@ import javafx.scene.image.Image;
 import javafx.scene.input.KeyEvent;
 import javafx.scene.input.MouseEvent;
 import javafx.scene.paint.Color;
+import javafx.scene.paint.ImagePattern;
 import javafx.scene.paint.PhongMaterial;
+import javafx.scene.shape.CullFace;
 import javafx.scene.shape.Rectangle;
+import javafx.scene.shape.Sphere;
 import javafx.scene.text.Font;
 import javafx.scene.text.Text;
 import javafx.scene.text.TextBoundsType;
@@ -19,6 +22,7 @@ import org.example.kanmi.enemies.Enemy;
 import org.example.kanmi.enemies.SmartEnemy;
 import org.example.kanmi.gameobject.GameObject;
 import org.example.kanmi.indicators.*;
+import org.example.kanmi.misc.Arc3D;
 import org.example.kanmi.misc.Cone;
 import org.example.kanmi.player.Player;
 import org.example.kanmi.ui.Button;
@@ -93,7 +97,8 @@ public class Game extends Scene {
             new ItemGenerator(Long.MAX_VALUE, 3, DumbEnemy::new),
             new ItemGenerator(Long.MAX_VALUE, 1, SmartEnemy::new),
             new ItemGenerator(10000, 0.2, 1, Health::new),
-            new ItemGenerator(10000, 0.1, 10, Pill::new)
+            new ItemGenerator(10000, 0.1, 1, Pill::new),
+            new ItemGenerator(15000, 1, 10, Joker::new)
     );
     private final TimeIndicator timeIndicator = new TimeIndicator();
     public enum State {
@@ -113,7 +118,15 @@ public class Game extends Scene {
         timeIndicator.setTranslateX(WIDTH);
         freezeIndicator.setTranslateX(10); freezeIndicator.setTranslateY(100); freezeIndicator.reset();
         AmbientLight light = new AmbientLight(Color.WHITE);
-        root3D.getChildren().add(light);
+        PointLight pointLight = new PointLight(Color.WHITE);
+        pointLight.setTranslateY(-500);
+        root3D.getChildren().add(pointLight);
+        Sphere universe = new Sphere(1200);
+        PhongMaterial mat = new PhongMaterial(Color.WHITE);
+        mat.setSelfIlluminationMap(new Image("nightsky.jpg"));
+        universe.setMaterial(mat);
+        universe.setCullFace(CullFace.NONE);
+        root3D.getChildren().add(universe);
     }
 
     private void remove(GameObject go) {
@@ -188,7 +201,6 @@ public class Game extends Scene {
         timer = new IntervalTimer() {
             @Override
             public void handleInterval(long interval) {
-                System.out.println("Timer");
                 for (GameObject go: objects) go.update(interval);
                 for (int i = 0; i < objects.size(); i++)
                     for (int j = i + 1; j < objects.size(); j++)

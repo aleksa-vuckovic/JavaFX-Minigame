@@ -90,7 +90,6 @@ public class Utils {
     public static void obstacleBarrierCollision(BarrierObject a, MovingGameObject b) {
         Point3D impact = a.getImpact(b);
         if (impact == null) return;
-        System.out.println("Impact = " + impact);
         Point3D direction = b.getDirection();
         Point3D normal = a.getNormal(impact);
         Transform align = Utils.alignTransform(normal, Rotate.X_AXIS);
