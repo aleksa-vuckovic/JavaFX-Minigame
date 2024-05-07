@@ -29,6 +29,7 @@ public class LWall extends Obstacle {
 
     @Override
     public void interact(GameObject other) {
+        System.out.println("!!!!!!!!!!!!!11lower");
         lower.interact(other);
         upper.interact(other);
     }

@@ -13,18 +13,12 @@ import javafx.scene.text.Font;
 import javafx.scene.text.Text;
 import javafx.scene.text.TextBoundsType;
 import org.example.kanmi.arena.Arena;
-import org.example.kanmi.collectibles.Freeze;
-import org.example.kanmi.collectibles.Health;
+import org.example.kanmi.collectibles.*;
 import org.example.kanmi.enemies.DumbEnemy;
 import org.example.kanmi.enemies.Enemy;
 import org.example.kanmi.enemies.SmartEnemy;
 import org.example.kanmi.gameobject.GameObject;
-import org.example.kanmi.indicators.EnergyIndicator;
-import org.example.kanmi.indicators.FreezeIndicator;
-import org.example.kanmi.indicators.HealthIndicator;
-import org.example.kanmi.indicators.TimeIndicator;
-import org.example.kanmi.collectibles.Coin;
-import org.example.kanmi.collectibles.Energy;
+import org.example.kanmi.indicators.*;
 import org.example.kanmi.misc.Cone;
 import org.example.kanmi.player.Player;
 import org.example.kanmi.ui.Button;
@@ -98,7 +92,8 @@ public class Game extends Scene {
             new ItemGenerator(5000, 0.3, 10, Freeze::new),
             new ItemGenerator(Long.MAX_VALUE, 3, DumbEnemy::new),
             new ItemGenerator(Long.MAX_VALUE, 1, SmartEnemy::new),
-            new ItemGenerator(10000, 0.2, 1, Health::new)
+            new ItemGenerator(10000, 0.2, 1, Health::new),
+            new ItemGenerator(10000, 0.1, 10, Pill::new)
     );
     private final TimeIndicator timeIndicator = new TimeIndicator();
     public enum State {
@@ -146,6 +141,7 @@ public class Game extends Scene {
             root2D.getChildren().remove(this.player.getScoreIndicator());
             root2D.getChildren().remove(this.player.getEnergyIndicator());
             root2D.getChildren().remove(this.player.getHealthIndicator());
+            root2D.getChildren().remove(this.player.getImmunityIndicator());
         }
         this.player = player;
         add(player);
@@ -156,6 +152,10 @@ public class Game extends Scene {
         HealthIndicator hi = player.getHealthIndicator();
         hi.setCentered(WIDTH); ei.setTranslateY(10);
         root2D.getChildren().add(hi);
+        ImmunityIndicator ii = player.getImmunityIndicator();
+        ii.setTranslateX(10);
+        ii.setTranslateY(150);
+        root2D.getChildren().add(ii);
         scene3D.setCamera(player.getCamera());
 
     }
@@ -188,6 +188,7 @@ public class Game extends Scene {
         timer = new IntervalTimer() {
             @Override
             public void handleInterval(long interval) {
+                System.out.println("Timer");
                 for (GameObject go: objects) go.update(interval);
                 for (int i = 0; i < objects.size(); i++)
                     for (int j = i + 1; j < objects.size(); j++)

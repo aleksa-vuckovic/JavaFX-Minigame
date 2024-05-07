@@ -29,17 +29,7 @@ public class Energy extends Collectible {
 
 
     @Override
-    public void interact(GameObject other) {
-        if (isCollected()) return;
-        if (getImpact(other) == null) return;
-        if (other instanceof Player) {
-            ((Player) other).getEnergyIndicator().inc(0.33);
-            setCollected();
-            disappear();
-        }
-        else if (other instanceof Enemy) {
-            setCollected();
-            vanish();
-        }
+    protected void collected(Player player) {
+        player.getEnergyIndicator().inc(0.33);
     }
 }

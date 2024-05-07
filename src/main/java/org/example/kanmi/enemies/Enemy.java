@@ -31,15 +31,19 @@ public class Enemy extends SelfMovingGameObject {
         Point3D impact = getImpact(go);
         if (impact == null) return;
         if (go instanceof Player) {
-            /*
+
             Utils.obstaclePointCollision(this, (Player)go);
             ((Player)go).enemyTouch();
-            */
+
+            /*
             Utils.elasticPointCollision(this, (Player)go);
             ((Player)go).enemyHit();
+            */
+
         }
         else if (go instanceof Enemy) {
-            Utils.elasticPointCollision(this, (Enemy)go);
+            Utils.obstaclePointCollision(this, (Enemy)go);
+            //Utils.elasticPointCollision(this, (Enemy)go);
         }
     }
 }

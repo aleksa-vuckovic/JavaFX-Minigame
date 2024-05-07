@@ -26,17 +26,7 @@ public class Freeze extends Collectible {
         getChildren().addAll(arms);
     }
     @Override
-    public void interact(GameObject other) {
-        if (isCollected()) return;
-        if (getImpact(other) == null) return;
-        if (other instanceof Player) {
-            game.freeze();
-            setCollected();
-            disappear();
-        }
-        else if (other instanceof Enemy) {
-            setCollected();
-            vanish();
-        }
+    protected void collected(Player player) {
+        game.freeze();
     }
 }

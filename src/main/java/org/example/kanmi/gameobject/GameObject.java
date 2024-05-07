@@ -3,6 +3,8 @@ package org.example.kanmi.gameobject;
 import javafx.geometry.Bounds;
 import javafx.geometry.Point3D;
 import javafx.scene.Group;
+import javafx.scene.transform.Affine;
+import javafx.scene.transform.Transform;
 import javafx.scene.transform.Translate;
 import org.example.kanmi.Game;
 import org.example.kanmi.Utils;
@@ -46,9 +48,14 @@ public abstract class GameObject extends Group {
      * @return The impact point in game coordinates, or null.
      */
     public Point3D getImpact(GameObject other) {
-        Bounds intersect = Utils.intersection(getBounds(), other.getBounds());
-        if (intersect != null) return Utils.center(intersect);
-        else return null;
+        try {
+            Transform sceneToLocalTransform = getLocalToSceneTransform().createInverse();
+            Affine affine = new Affine(sceneToLocalTransform);
+            affine.append(other.getLocalToSceneTransform());
+            Bounds intersect = Utils.intersection(getBoundsInLocal(), affine.transform(other.getBoundsInLocal()));
+            if (intersect != null) return Utils.center(localToScene(intersect));
+        } catch(Exception e) {}
+        return null;
     }
     public boolean contains(Point3D point) {
         return getBounds().contains(point);

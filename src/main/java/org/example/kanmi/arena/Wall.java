@@ -27,7 +27,7 @@ public class Wall extends Obstacle {
         double x = box.getWidth()/2 - Math.abs(impact.getX());
         double y = box.getHeight()/2 - Math.abs(impact.getY());
         double z = box.getDepth()/2 - Math.abs(impact.getZ());
-        Transform t = getLocalToSceneTransform();
+        Transform t = box.getLocalToSceneTransform();
         Point3D normal;
         if (x <= y && x <= z) {
             normal = Rotate.X_AXIS.multiply(impact.getX());

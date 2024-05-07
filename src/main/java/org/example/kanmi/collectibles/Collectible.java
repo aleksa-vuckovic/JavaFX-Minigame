@@ -7,7 +7,9 @@ import javafx.scene.transform.Scale;
 import javafx.util.Duration;
 import org.example.kanmi.Game;
 import org.example.kanmi.Utils;
+import org.example.kanmi.enemies.Enemy;
 import org.example.kanmi.gameobject.GameObject;
+import org.example.kanmi.player.Player;
 
 public abstract class Collectible extends GameObject {
 
@@ -67,4 +69,21 @@ public abstract class Collectible extends GameObject {
         rotating.stop();
         rotating = null;
     }
+
+    @Override
+    public void interact(GameObject other) {
+        if (isCollected()) return;
+        if (getImpact(other) == null) return;
+        if (other instanceof Player) {
+            collected((Player) other);
+            setCollected();
+            disappear();
+        }
+        else if (other instanceof Enemy) {
+            setCollected();
+            vanish();
+        }
+    }
+
+    protected abstract void collected(Player player);
 }

@@ -55,6 +55,7 @@ public class BonusIndicator extends Group {
         update();
         return false;
     }
+    public boolean isActive() { return value != null; }
 
     private void update() {
         if (value == null) {

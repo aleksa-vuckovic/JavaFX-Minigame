@@ -13,6 +13,7 @@ import org.example.kanmi.gameobject.GameObject;
 import org.example.kanmi.gameobject.SelfMovingGameObject;
 import org.example.kanmi.indicators.EnergyIndicator;
 import org.example.kanmi.indicators.HealthIndicator;
+import org.example.kanmi.indicators.ImmunityIndicator;
 import org.example.kanmi.indicators.ScoreIndicator;
 
 import java.util.HashSet;
@@ -35,6 +36,7 @@ public class Player extends SelfMovingGameObject {
     private ScoreIndicator scoreIndicator = new ScoreIndicator();
     private EnergyIndicator energyIndicator = new EnergyIndicator();
     private HealthIndicator healthIndicator = new HealthIndicator();
+    private ImmunityIndicator immunityIndicator = new ImmunityIndicator();
     private final Rotate rotation = new Rotate(0, Rotate.Y_AXIS);
 
     private final Set<KeyCode> controls = new HashSet<>();
@@ -60,14 +62,15 @@ public class Player extends SelfMovingGameObject {
         this.speed = speed;
         this.energyExpenditure = energyExpenditure;
         bounds = new Cylinder(radius, height);
-        bounds.setMaterial(new PhongMaterial(Color.TRANSPARENT));
-        head.setHeight(height/2);
+        bounds.setMaterial(new PhongMaterial(Color.GREEN));
+        //bounds.setMaterial(new PhongMaterial(Color.TRANSPARENT));
+        head.setHeight(height);///2);
         getChildren().addAll(bounds, head);
         getTransforms().addAll(rotation);
         position.setY(-height/2);
     }
     public static Player getRegularPlayer() {
-         Player ret = new Player(15,100, Game.PLAYER_SPEED, 0.1/1000);
+         Player ret = new Player(15,100, Game.PLAYER_SPEED, 0.000005/1000);
          ret.setMass(100);
          return ret;
     }
@@ -90,9 +93,11 @@ public class Player extends SelfMovingGameObject {
         tillJump -= interval;
         if (getMotor().magnitude() > 0.001) energyIndicator.dec(interval*energyExpenditure);
         else energyIndicator.inc(interval*energyExpenditure*2);
-        /*healthIndicator.dec(enemies*HEALTH_LOSS*interval);
+        immunityIndicator.dec(interval);
+
+        if (!immunityIndicator.isActive()) healthIndicator.dec(enemies*HEALTH_LOSS*interval);
         enemies = 0;
-        if (healthIndicator.getValue() <= 0) game.gameOver();*/
+        if (healthIndicator.getValue() <= 0) game.gameOver();
     }
     public PerspectiveCamera getCamera() {
         return head.getCamera();
@@ -106,6 +111,9 @@ public class Player extends SelfMovingGameObject {
     }
     public HealthIndicator getHealthIndicator() {
         return healthIndicator;
+    }
+    public ImmunityIndicator getImmunityIndicator() {
+        return immunityIndicator;
     }
 
     @Override
@@ -129,6 +137,7 @@ public class Player extends SelfMovingGameObject {
         enemies += 1;
     }
     public void enemyHit() {
+        if (immunityIndicator.isActive()) return;
         healthIndicator.dec(0.2);
         if (healthIndicator.getValue() <= 0) game.gameOver();
     }
