@@ -130,8 +130,6 @@ public class Player extends SelfMovingGameObject {
         dir = new Point3D(dir.getX(), dir.getY() - 0.5, dir.getZ());
         setDirection(dir);
     }
-
-
     private int enemies = 0;
     public void enemyTouch() {
         enemies += 1;
@@ -139,6 +137,12 @@ public class Player extends SelfMovingGameObject {
     public void enemyHit() {
         if (immunityIndicator.isActive()) return;
         healthIndicator.dec(0.2);
+        if (healthIndicator.getValue() <= 0) game.gameOver();
+    }
+
+    public void canonBallHit() {
+        if (immunityIndicator.isActive()) return;
+        healthIndicator.dec(0.15);
         if (healthIndicator.getValue() <= 0) game.gameOver();
     }
 }

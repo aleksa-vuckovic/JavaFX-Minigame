@@ -46,13 +46,6 @@ public abstract class MovingGameObject extends GameObject {
         move(getDirection().multiply(interval));
         //Update direction based on force
         setDirection(getDirection().add(netForce().multiply(1/getMass()).multiply(interval)));
-
-        /*
-        double dspeed = (double)interval * 981/1000000;
-        Point3D dir = getDirection();
-        dir = new Point3D(dir.getX(), dir.getY() + dspeed, dir.getZ());
-        setDirection(dir);
-        */
     }
 
     /**

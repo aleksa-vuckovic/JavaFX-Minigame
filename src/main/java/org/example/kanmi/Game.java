@@ -15,11 +15,11 @@ import javafx.scene.shape.Sphere;
 import javafx.scene.text.Font;
 import javafx.scene.text.Text;
 import javafx.scene.text.TextBoundsType;
+import javafx.scene.transform.Rotate;
+import javafx.util.Pair;
 import org.example.kanmi.arena.Arena;
 import org.example.kanmi.collectibles.*;
-import org.example.kanmi.enemies.DumbEnemy;
-import org.example.kanmi.enemies.Enemy;
-import org.example.kanmi.enemies.SmartEnemy;
+import org.example.kanmi.enemies.*;
 import org.example.kanmi.gameobject.GameObject;
 import org.example.kanmi.indicators.*;
 import org.example.kanmi.misc.Arc3D;
@@ -129,11 +129,11 @@ public class Game extends Scene {
         root3D.getChildren().add(universe);
     }
 
-    private void remove(GameObject go) {
+    public void remove(GameObject go) {
         root3D.getChildren().remove(go);
         objects.remove(go);
     }
-    private void add(GameObject go) {
+    public void add(GameObject go) {
         root3D.getChildren().add(go);
         objects.add(go);
     }
@@ -192,6 +192,13 @@ public class Game extends Scene {
     }
     public void start() {
         state = State.PLAYING;
+        for (int i = 0; i < 2; i++) {
+            Canon canon = new Canon(25, 40);
+            Pair<Point3D, Point3D> loc = arena.getRandomWallLocation();
+            canon.setPosition(loc.getKey());
+            canon.getTransforms().add(Utils.alignTransform(Rotate.Z_AXIS, loc.getValue()));
+            add(canon);
+        }
         timeIndicator.start();
         for (GameObject go: objects) go.start(this);
         for (ItemGenerator gen: generators) {

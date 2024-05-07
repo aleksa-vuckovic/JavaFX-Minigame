@@ -5,6 +5,7 @@ import javafx.scene.image.Image;
 import javafx.scene.paint.Color;
 import javafx.scene.paint.Material;
 import javafx.scene.paint.PhongMaterial;
+import javafx.util.Pair;
 import org.example.kanmi.gameobject.BarrierObject;
 import org.example.kanmi.gameobject.GameObject;
 
@@ -38,5 +39,10 @@ public abstract class Arena extends BarrierObject {
      * @return A random location on the surface of the arena.
      */
     public abstract Point3D getRandomLocation();
+    /**
+     *
+     * @return A random location on the wall surface, and a normal on the wall, pointing inwards.
+     */
+    public abstract Pair<Point3D, Point3D> getRandomWallLocation();
 
 }

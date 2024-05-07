@@ -27,7 +27,12 @@ public class Enemy extends SelfMovingGameObject {
 
     @Override
     public void interact(GameObject go) {
-        if (go instanceof Collectible || go instanceof BarrierObject) { go.interact(this); return; }
+        if (go instanceof Collectible
+                || go instanceof CanonBall
+                || go instanceof BarrierObject) {
+            go.interact(this);
+            return;
+        }
         Point3D impact = getImpact(go);
         if (impact == null) return;
         if (go instanceof Player) {

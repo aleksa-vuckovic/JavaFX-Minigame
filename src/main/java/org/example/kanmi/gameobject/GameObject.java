@@ -105,6 +105,6 @@ public abstract class GameObject extends Group {
  * Interaction is a 2-way event, so to avoid implementing the same procedure in 2 classes,
  * an ordering among all types will be established.
  *
- * Collectible -> BarrierObject -> DumbEnemy -> Player
+ * Collectible -> CanonBall -> BarrierObject -> Enemy -> Player
  *
  */

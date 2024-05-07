@@ -7,6 +7,7 @@ import javafx.scene.paint.Material;
 import javafx.scene.paint.PhongMaterial;
 import javafx.scene.shape.Box;
 import javafx.scene.transform.Rotate;
+import javafx.util.Pair;
 import org.example.kanmi.gameobject.GameObject;
 
 public class RectangleArena extends Arena {
@@ -19,8 +20,13 @@ public class RectangleArena extends Arena {
 
     private Obstacle[] obstacles;
 
+    double width, length, wallThickness, wallHeight;
+
     public RectangleArena(double width, double length,
                           double wallThickness, double wallHeight) {
+        this.width = width; this.length = length;
+        this.wallThickness = wallThickness; this.wallHeight = wallHeight;
+
         ground = new Wall(width, length, 30); ground.setTranslateY(30);
         getChildren().addAll(ground);
         innerSpace = new Box(width, 100000, length);
@@ -97,5 +103,29 @@ public class RectangleArena extends Arena {
         double x = (Math.random()-0.5)*innerSpace.getWidth();
         double z = (Math.random()-0.5)*innerSpace.getDepth();
         return localToScene(new Point3D(x, 0, z));
+    }
+
+    @Override
+    public Pair<Point3D, Point3D> getRandomWallLocation() {
+        double t = Math.random();
+        double n = Math.random();
+        Point3D loc; Point3D normal;
+        if (n < 0.25) {
+            loc = new Point3D(-width/2, -wallHeight/2, (t-0.5)*length);
+            normal = new Point3D(1, 0, 0);
+        }
+        else if (n < 0.5) {
+            loc = new Point3D(width/2, -wallHeight/2, (t-0.5)*length);
+            normal = new Point3D(-1, 0, 0);
+        }
+        else if (n < 0.75) {
+            loc = new Point3D((t-0.5)*length, -wallHeight/2, length/2);
+            normal = new Point3D(0, 0, -1);
+        }
+        else {
+            loc = new Point3D((t-0.5)*length, -wallHeight/2, -length/2);
+            normal = new Point3D(0, 0, 1);
+        }
+        return new Pair<>(loc, normal);
     }
 }
